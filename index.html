@@ -125,7 +125,20 @@
 
     .meta { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; }
     .meta-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; color: var(--dim); }
-    .meta-item .val { font-size: 15px; color: var(--green-dim); letter-spacing: 1px; }
+
+    .meta-item .val {
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--green-dim);
+      text-shadow: 0 0 18px var(--green-dim);
+      letter-spacing: 1px;
+      transition: all .3s ease;
+    }
+    .meta-item .val:hover {
+      color: var(--green);
+      text-shadow: 0 0 24px rgba(0,255,150,.9), 0 0 40px rgba(0,255,150,.5);
+      transform: scale(1.05);
+    }
 
     .copy-btn {
       margin-top: 20px;
@@ -281,6 +294,98 @@
       border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 20px;
     }
 
+    /* ══ PAGE 3 — 计时提醒 ══ */
+    #page3 {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      gap: 24px;
+    }
+    #page3.active { display: flex; }
+
+    .timer-block { display: flex; flex-direction: column; gap: 18px; }
+
+    .timer-header {
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    }
+    .timer-title { font-size: 11px; letter-spacing: 4px; color: var(--green-dim); }
+    .timer-duration-badge {
+      font-size: 10px; letter-spacing: 2px;
+      padding: 4px 12px; border-radius: 20px;
+      border: 1px solid rgba(0,255,150,.2);
+      color: var(--green-dim); background: var(--green-faint);
+    }
+
+    .countdown-display {
+      text-align: center; padding: 28px 0 20px;
+      background: rgba(0,0,0,.3); border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+    .countdown-display.ringing {
+      border-color: var(--warn);
+      animation: ringFlash .6s ease-in-out infinite;
+    }
+    @keyframes ringFlash {
+      0%,100% { box-shadow: none; }
+      50%      { box-shadow: 0 0 30px rgba(255,171,64,.3); }
+    }
+    .countdown-num {
+      font-size: clamp(48px, 10vw, 88px); font-weight: 700;
+      color: var(--green); letter-spacing: 4px;
+      text-shadow: 0 0 20px var(--green-dim);
+      transition: color .3s;
+    }
+    .countdown-display.ringing .countdown-num { color: var(--warn); text-shadow: 0 0 20px rgba(255,171,64,.6); }
+    .countdown-unit { font-size: 11px; letter-spacing: 4px; color: var(--dim); margin-top: 6px; }
+    .countdown-sub  { font-size: 12px; color: var(--dim); margin-top: 10px; letter-spacing: 1px; }
+    <!--  开始计时  -->
+    .timer-start-info {
+      background: rgba(0,0,0,.25); border: 1px solid rgba(255,255,255,.06);
+      border-radius: 10px; padding: 14px 18px;
+      font-size: 16px; color: #ffffff; letter-spacing: 1px;
+      display: flex; gap: 20px; flex-wrap: wrap;
+    }
+    .timer-start-info span { color: var(--green); font-weight: 600; }
+
+
+    .timer-btn-row { display: flex; gap: 10px; }
+
+    .timer-start-btn {
+      flex: 1; padding: 15px;
+      border-radius: 10px; border: 1px solid rgba(0,255,150,.3);
+      background: var(--green-faint); color: var(--green);
+      font-family: inherit; font-size: 13px; letter-spacing: 2px;
+      cursor: pointer; transition: all .25s;
+    }
+    .timer-start-btn:hover { background: rgba(0,255,150,.14); box-shadow: 0 0 18px rgba(0,255,150,.1); }
+    .timer-start-btn.running {
+      border-color: var(--warn); color: var(--warn);
+      background: rgba(255,171,64,.06);
+    }
+    .timer-start-btn.running:hover { background: rgba(255,171,64,.12); }
+    .timer-start-btn.done {
+      border-color: var(--err); color: var(--err);
+      background: rgba(255,77,109,.06);
+    }
+
+    .timer-reset-btn {
+      padding: 15px 22px;
+      border-radius: 10px; border: 1px solid rgba(255,255,255,.1);
+      background: transparent; color: var(--dim);
+      font-family: inherit; font-size: 12px; letter-spacing: 1px;
+      cursor: pointer; transition: all .2s;
+    }
+    .timer-reset-btn:hover { color: var(--text); border-color: rgba(255,255,255,.25); }
+
+    .ring-msg {
+      text-align: center; padding: 12px;
+      font-size: 14px; letter-spacing: 2px;
+      color: var(--warn);
+      display: none;
+    }
+    .ring-msg.show { display: block; animation: ringFlash .8s ease-in-out infinite; }
+
     @media (max-width: 600px) {
       .card { padding: 20px; }
       .rec-slots, .rate-grid, .result-grid { grid-template-columns: 1fr; }
@@ -295,6 +400,7 @@
 <nav class="tab-nav">
   <button class="tab-btn active" onclick="showPage(1, this)">⏱  TIMESTAMP</button>
   <button class="tab-btn" onclick="showPage(2, this)">📊  TOOLS</button>
+  <button class="tab-btn" onclick="showPage(3, this)">🔔  REMINDER</button>
 </nav>
 
 <!-- ══════════════ PAGE 1 ══════════════ -->
@@ -450,6 +556,69 @@
       <button class="calc-btn" style="grid-column:1/-1" onclick="calcRate()">
         计算传输速率
       </button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════ PAGE 3 ══════════════ -->
+<div id="page3" class="page">
+
+  <!-- 1小时计时提醒 -->
+  <div class="card" style="max-width:780px;width:100%">
+    <div class="timer-header">
+      <div class="section-title" style="margin:0;border:none;padding:0">⏰  1 小时计时提醒</div>
+      <div class="timer-duration-badge">60 MIN</div>
+    </div>
+    <div class="timer-block" style="margin-top:20px">
+
+      <div class="countdown-display" id="cd1-display">
+        <div class="countdown-num" id="cd1-num">60:00</div>
+        <div class="countdown-unit">剩余时间</div>
+        <div class="countdown-sub" id="cd1-sub">尚未开始</div>
+      </div>
+
+      <div class="ring-msg" id="cd1-ring">🔔 时间到！1小时已到达</div>
+
+      <div class="timer-start-info" id="cd1-info" style="display:none">
+        <div style="margin-right: 32px;">开始时间：<span id="cd1-startHuman">—</span></div>
+        <div>到期时间：<span id="cd1-endHuman">—</span></div>
+      </div>
+
+
+      <div class="timer-btn-row">
+        <button class="timer-start-btn" id="cd1-btn" onclick="timerAction(1)">开始计时</button>
+        <button class="timer-reset-btn" onclick="timerReset(1)">重置</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10分钟计时提醒 -->
+  <div class="card" style="max-width:780px;width:100%">
+    <div class="timer-header">
+      <div class="section-title" style="margin:0;border:none;padding:0">⏰  10 分钟计时提醒</div>
+      <div class="timer-duration-badge">10 MIN</div>
+    </div>
+    <div class="timer-block" style="margin-top:20px">
+
+      <div class="countdown-display" id="cd2-display">
+        <div class="countdown-num" id="cd2-num">10:00</div>
+        <div class="countdown-unit">剩余时间</div>
+        <div class="countdown-sub" id="cd2-sub">尚未开始</div>
+      </div>
+
+      <div class="ring-msg" id="cd2-ring">🔔 时间到！10分钟已到达</div>
+
+<!--<div style="margin-right: 32px;"：这个内联样式给"开始时间"的 <div> 添加了右边距 32 像素> -->
+      <div class="timer-start-info" id="cd2-info" style="display:none">
+        <div style="margin-right: 32px;">开始时间：<span id="cd2-startHuman">—</span></div>
+        <div>到期时间：<span id="cd2-endHuman">—</span></div>
+      </div>
+
+      <div class="timer-btn-row">
+        <button class="timer-start-btn" id="cd2-btn" onclick="timerAction(2)">开始计时</button>
+        <button class="timer-reset-btn" onclick="timerReset(2)">重置</button>
+      </div>
     </div>
   </div>
 
@@ -689,6 +858,178 @@ function calcRate() {
   else if (bytes < 1024**3)    sd = (bytes/1024**2).toFixed(3) + ' MB';
   else                         sd = (bytes/1024**3).toFixed(4) + ' GB';
   document.getElementById('r-size').textContent = sd;
+}
+
+// ── 计时提醒 ──────────────────────────────────────────────────
+// 配置：1=1小时，2=10分钟
+const TIMER_CFG = {
+  1: { total: 60 * 60 },   // 秒
+  2: { total: 10 * 60 }
+};
+
+const timerState = {
+  1: { running: false, startMs: null, endMs: null, ivId: null, done: false },
+  2: { running: false, startMs: null, endMs: null, ivId: null, done: false }
+};
+
+// Web Audio API 生成提示音
+function playAlert() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [0, 0.35, 0.7].forEach(delay => {
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, ctx.currentTime + delay);
+      osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + delay + 0.3);
+      gain.gain.setValueAtTime(0.6, ctx.currentTime + delay);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.4);
+      osc.start(ctx.currentTime + delay);
+      osc.stop(ctx.currentTime + delay + 0.4);
+    });
+  } catch(e) {}
+}
+
+function fmtCountdown(remainSec) {
+  const m = Math.floor(remainSec / 60);
+  const s = Math.floor(remainSec % 60);
+  return `${pad(m)}:${pad(s)}`;
+}
+
+function humanTime(ms) {
+  const d = new Date(ms);
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ` +
+         `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+
+function timerTick(id) {
+  const st  = timerState[id];
+  const now = Date.now();
+  const remain = Math.max(0, (st.endMs - now) / 1000);
+
+  document.getElementById(`cd${id}-num`).textContent = fmtCountdown(remain);
+
+  const pct = Math.round((1 - remain / TIMER_CFG[id].total) * 100);
+  document.getElementById(`cd${id}-sub`).textContent = `已用 ${pct}%`;
+
+  if (remain <= 0 && !st.done) {
+    st.done = true;
+    clearInterval(st.ivId);
+    st.running = false;
+    // 更新 UI
+    document.getElementById(`cd${id}-num`).textContent = '00:00';
+    document.getElementById(`cd${id}-sub`).textContent = '已完成！';
+    document.getElementById(`cd${id}-display`).classList.add('ringing');
+    document.getElementById(`cd${id}-ring`).classList.add('show');
+    const btn = document.getElementById(`cd${id}-btn`);
+    btn.textContent = '已到时 — 重新开始';
+    btn.classList.remove('running'); btn.classList.add('done');
+    // 播放提示音（重复 3 次）
+    playAlert();
+    setTimeout(playAlert, 1500);
+    setTimeout(playAlert, 3000);
+  }
+}
+
+function timerAction(id) {
+  const st  = timerState[id];
+  const btn = document.getElementById(`cd${id}-btn`);
+
+  if (!st.running) {
+    // 开始（或重新开始）
+    timerReset(id);
+    st.running  = true;
+    st.done     = false;
+    st.startMs  = Date.now();
+    st.endMs    = st.startMs + TIMER_CFG[id].total * 1000;
+
+    // 显示时间信息
+    document.getElementById(`cd${id}-info`).style.display = 'flex';
+    document.getElementById(`cd${id}-startHuman`).textContent = humanTime(st.startMs);
+    document.getElementById(`cd${id}-endHuman`).textContent   = humanTime(st.endMs);
+
+    btn.textContent = '计时中 — 点击暂停';
+    btn.classList.add('running'); btn.classList.remove('done');
+
+    timerTick(id);
+    st.ivId = setInterval(() => timerTick(id), 500);
+  } else {
+    // 暂停
+    clearInterval(st.ivId);
+    st.running = false;
+    btn.textContent = '继续计时';
+    btn.classList.remove('running');
+    // 保存剩余时间作为新终点
+    const remain = Math.max(0, st.endMs - Date.now());
+    // 重置 endMs 为当前的剩余（暂停后继续时从此续算）
+    st._pausedRemainMs = remain;
+  }
+}
+
+// 处理暂停后继续（覆写 timerAction 中"继续"分支）
+const _origAction = timerAction;
+// 用闭包实现：当 running=false 且 _pausedRemainMs 存在时，继续倒计时
+function timerAction(id) {
+  const st  = timerState[id];
+  const btn = document.getElementById(`cd${id}-btn`);
+
+  if (st.done) {
+    // 已到时，重置后重新开始
+    timerReset(id);
+    timerAction(id);
+    return;
+  }
+
+  if (!st.running) {
+    if (st._pausedRemainMs !== undefined) {
+      // 从暂停恢复
+      st.running  = true;
+      st.endMs    = Date.now() + st._pausedRemainMs;
+      delete st._pausedRemainMs;
+      btn.textContent = '计时中 — 点击暂停';
+      btn.classList.add('running');
+      timerTick(id);
+      st.ivId = setInterval(() => timerTick(id), 500);
+    } else {
+      // 全新开始
+      st.running  = true;
+      st.done     = false;
+      st.startMs  = Date.now();
+      st.endMs    = st.startMs + TIMER_CFG[id].total * 1000;
+      document.getElementById(`cd${id}-info`).style.display = 'flex';
+      document.getElementById(`cd${id}-startHuman`).textContent = humanTime(st.startMs);
+      document.getElementById(`cd${id}-endHuman`).textContent   = humanTime(st.endMs);
+      btn.textContent = '计时中 — 点击暂停';
+      btn.classList.add('running'); btn.classList.remove('done');
+      timerTick(id);
+      st.ivId = setInterval(() => timerTick(id), 500);
+    }
+  } else {
+    // 暂停
+    clearInterval(st.ivId);
+    st.running = false;
+    st._pausedRemainMs = Math.max(0, st.endMs - Date.now());
+    btn.textContent = '继续计时';
+    btn.classList.remove('running');
+  }
+}
+
+function timerReset(id) {
+  const st = timerState[id];
+  clearInterval(st.ivId);
+  Object.assign(st, { running: false, startMs: null, endMs: null, ivId: null, done: false });
+  delete st._pausedRemainMs;
+
+  const defaults = { 1: '60:00', 2: '10:00' };
+  document.getElementById(`cd${id}-num`).textContent = defaults[id];
+  document.getElementById(`cd${id}-sub`).textContent = '尚未开始';
+  document.getElementById(`cd${id}-display`).classList.remove('ringing');
+  document.getElementById(`cd${id}-ring`).classList.remove('show');
+  document.getElementById(`cd${id}-info`).style.display = 'none';
+  const btn = document.getElementById(`cd${id}-btn`);
+  btn.textContent = '开始计时';
+  btn.classList.remove('running', 'done');
 }
 </script>
 </body>
