@@ -40,7 +40,6 @@
     }
     @keyframes gridMove { to { transform: translateY(40px); } }
 
-    /* ── Tab 导航 ── */
     .tab-nav {
       position: relative; z-index: 10;
       display: flex; gap: 0;
@@ -64,11 +63,9 @@
       text-shadow: 0 0 10px var(--green-dim);
     }
 
-    /* ── 页面容器 ── */
     .page { display: none; position: relative; z-index: 1; }
     .page.active { display: block; }
 
-    /* ══ PAGE 1 ══ */
     #page1 {
       display: none;
       flex-direction: column;
@@ -88,7 +85,6 @@
       box-shadow: 0 0 40px rgba(0,255,150,.04);
     }
 
-    /* 主时间戳显示 */
     .live-badge {
       display: flex; align-items: center; gap: 6px;
       font-size: 10px; letter-spacing: 3px; color: var(--green-dim);
@@ -127,8 +123,7 @@
     .meta-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; color: var(--dim); }
 
     .meta-item .val {
-      font-size: 30px;
-      font-weight: 700;
+      font-size: 20px; font-weight: 700;
       color: var(--green-dim);
       text-shadow: 0 0 18px var(--green-dim);
       letter-spacing: 1px;
@@ -151,7 +146,6 @@
     .copy-btn:hover { background: rgba(0,255,150,.14); color: var(--green); box-shadow: 0 0 14px rgba(0,255,150,.12); }
     .copy-btn.ok { color: rgba(255,255,255,.5); border-color: rgba(255,255,255,.2); }
 
-    /* 转换面板 */
     .conv-title { font-size: 11px; letter-spacing: 3px; color: var(--green-dim); margin-bottom: 18px; }
 
     .conv-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
@@ -167,7 +161,7 @@
     .inp:focus { border-color: rgba(0,255,150,.5); box-shadow: 0 0 10px rgba(0,255,150,.08); }
     .inp::placeholder { color: rgba(255,255,255,.2); }
 
-    .inp-sm { width: 90px; flex: none; }
+    .inp-sm { flex: none; }
 
     select.inp {
       cursor: pointer;
@@ -215,7 +209,6 @@
     }
     #page2.active { display: flex; }
 
-    /* 时间间隔记录 */
     .rec-area { display: flex; flex-direction: column; gap: 16px; }
 
     .rec-btn {
@@ -227,8 +220,7 @@
     }
     .rec-btn:hover { background: rgba(0,255,150,.14); box-shadow: 0 0 20px rgba(0,255,150,.1); }
     .rec-btn.armed {
-      border-color: var(--warn);
-      color: var(--warn);
+      border-color: var(--warn); color: var(--warn);
       background: rgba(255,171,64,.06);
       animation: armPulse 1.2s ease-in-out infinite;
     }
@@ -238,10 +230,11 @@
     .rec-slot {
       background: rgba(0,0,0,.3); border: 1px solid rgba(255,255,255,.08);
       border-radius: 10px; padding: 16px;
+      min-width: 0; overflow: hidden;
     }
     .rec-slot-label { font-size: 10px; letter-spacing: 3px; color: var(--dim); margin-bottom: 8px; }
-    .rec-slot-ts { font-size: 20px; color: var(--green); letter-spacing: 1px; }
-    .rec-slot-human { font-size: 11px; color: var(--dim); margin-top: 4px; }
+    .rec-slot-ts { font-size: clamp(13px, 2.6vw, 20px); color: var(--green); letter-spacing: 1px; word-break: break-all; }
+    .rec-slot-human { font-size: 11px; color: var(--dim); margin-top: 4px; word-break: break-all; }
     .rec-slot.set { border-color: rgba(0,255,150,.25); }
 
     .interval-display {
@@ -262,23 +255,43 @@
     }
     .reset-btn:hover { color: var(--text); border-color: rgba(255,255,255,.25); }
 
-    /* 传输速率计算 */
-    .rate-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    /* ── 传输速率计算 ── */
+    .rate-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;  /* ← 两端对齐 */
+      gap: 16px;
+    }
 
-    .field-group { display: flex; flex-direction: column; gap: 6px; }
+    .field-group {
+      display: flex; flex-direction: column; gap: 6px;
+      flex: 1 1 220px;   /* ← 可伸缩，最小 220px */
+      min-width: 0;
+    }
     .field-label { font-size: 10px; letter-spacing: 3px; color: var(--dim); }
 
-    .size-row { display: flex; gap: 8px; }
+    .size-row { display: flex; flex-wrap: wrap; }
+    .size-row .inp {
+      min-width: 80px;
+      border-radius: 8px 0 0 8px;
+      border-right: none;
+    }
+    .size-row .inp:focus { border-right: none; z-index: 1; }
+    .size-row .inp-sm {
+      border-radius: 0 8px 8px 0;
+      border-left: 1px solid rgba(0,255,150,.18);
+      width: 80px;
+    }
 
     .result-box {
-      grid-column: 1 / -1;
+      width: 100%;                    /* ← 独占一行 */
       background: rgba(0,0,0,.4); border: 1px solid var(--border);
       border-radius: 10px; padding: 20px 24px;
     }
-    .result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 12px; }
-    .result-item { display: flex; flex-direction: column; gap: 4px; }
+    .result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 16px; margin-top: 12px; }
+    .result-item { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
     .result-item .r-label { font-size: 10px; letter-spacing: 2px; color: var(--dim); }
-    .result-item .r-val { font-size: 18px; color: var(--green); letter-spacing: 1px; }
+    .result-item .r-val { font-size: 18px; color: var(--green); letter-spacing: 1px; overflow-wrap: break-word; }
 
     .calc-btn {
       width: 100%; padding: 14px;
@@ -294,13 +307,10 @@
       border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 20px;
     }
 
-    /* ══ PAGE 3 — 自定义倒计时 ══ */
+    /* ══ PAGE 3 ══ */
     #page3 {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      padding: 40px 20px;
-      gap: 24px;
+      display: none; flex-direction: column; align-items: center;
+      padding: 40px 20px; gap: 24px;
     }
     #page3.active { display: flex; }
 
@@ -310,8 +320,7 @@
     }
     .timer-count-label { font-size: 11px; color: var(--dim); letter-spacing: 2px; }
     .add-timer-btn {
-      padding: 10px 22px;
-      border-radius: 10px; border: 1px solid rgba(0,255,150,.3);
+      padding: 10px 22px; border-radius: 10px; border: 1px solid rgba(0,255,150,.3);
       background: var(--green-faint); color: var(--green);
       font-family: inherit; font-size: 12px; letter-spacing: 2px;
       cursor: pointer; transition: all .2s;
@@ -321,9 +330,7 @@
 
     .timer-block { display: flex; flex-direction: column; gap: 18px; }
 
-    .timer-header {
-      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
-    }
+    .timer-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
     .timer-name-inp {
       background: transparent; border: none; border-bottom: 1px solid rgba(0,255,150,.2);
       color: var(--green-dim); font-family: inherit; font-size: 11px; letter-spacing: 3px;
@@ -341,9 +348,7 @@
     .timer-del-btn:hover { color: var(--err); border-color: rgba(255,77,109,.5); background: rgba(255,77,109,.06); }
     .timer-del-btn:disabled { opacity: .25; cursor: not-allowed; }
 
-    .duration-row {
-      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-    }
+    .duration-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .duration-label { font-size: 11px; letter-spacing: 2px; color: var(--dim); margin-right: 4px; }
     .duration-inp {
       width: 62px; text-align: center;
@@ -359,22 +364,13 @@
 
     .countdown-display {
       text-align: center; padding: 28px 0 20px;
-      background: rgba(0,0,0,.3); border: 1px solid var(--border);
-      border-radius: 14px;
+      background: rgba(0,0,0,.3); border: 1px solid var(--border); border-radius: 14px;
     }
-    .countdown-display.ringing {
-      border-color: var(--warn);
-      animation: ringFlash .6s ease-in-out infinite;
-    }
-    @keyframes ringFlash {
-      0%,100% { box-shadow: none; }
-      50%      { box-shadow: 0 0 30px rgba(255,171,64,.3); }
-    }
+    .countdown-display.ringing { border-color: var(--warn); animation: ringFlash .6s ease-in-out infinite; }
+    @keyframes ringFlash { 0%,100% { box-shadow: none; } 50% { box-shadow: 0 0 30px rgba(255,171,64,.3); } }
     .countdown-num {
       font-size: clamp(48px, 10vw, 88px); font-weight: 700;
-      color: var(--green); letter-spacing: 4px;
-      text-shadow: 0 0 20px var(--green-dim);
-      transition: color .3s;
+      color: var(--green); letter-spacing: 4px; text-shadow: 0 0 20px var(--green-dim); transition: color .3s;
     }
     .countdown-display.ringing .countdown-num { color: var(--warn); text-shadow: 0 0 20px rgba(255,171,64,.6); }
     .countdown-unit { font-size: 11px; letter-spacing: 4px; color: var(--dim); margin-top: 6px; }
@@ -391,53 +387,34 @@
     .timer-btn-row { display: flex; gap: 10px; }
 
     .timer-start-btn {
-      flex: 1; padding: 15px;
-      border-radius: 10px; border: 1px solid rgba(0,255,150,.3);
+      flex: 1; padding: 15px; border-radius: 10px; border: 1px solid rgba(0,255,150,.3);
       background: var(--green-faint); color: var(--green);
-      font-family: inherit; font-size: 13px; letter-spacing: 2px;
-      cursor: pointer; transition: all .25s;
+      font-family: inherit; font-size: 13px; letter-spacing: 2px; cursor: pointer; transition: all .25s;
     }
     .timer-start-btn:hover { background: rgba(0,255,150,.14); box-shadow: 0 0 18px rgba(0,255,150,.1); }
-    .timer-start-btn.running {
-      border-color: var(--warn); color: var(--warn);
-      background: rgba(255,171,64,.06);
-    }
+    .timer-start-btn.running { border-color: var(--warn); color: var(--warn); background: rgba(255,171,64,.06); }
     .timer-start-btn.running:hover { background: rgba(255,171,64,.12); }
-    .timer-start-btn.done {
-      border-color: var(--err); color: var(--err);
-      background: rgba(255,77,109,.06);
-    }
+    .timer-start-btn.done { border-color: var(--err); color: var(--err); background: rgba(255,77,109,.06); }
 
     .timer-reset-btn {
-      padding: 15px 22px;
-      border-radius: 10px; border: 1px solid rgba(255,255,255,.1);
+      padding: 15px 22px; border-radius: 10px; border: 1px solid rgba(255,255,255,.1);
       background: transparent; color: var(--dim);
-      font-family: inherit; font-size: 12px; letter-spacing: 1px;
-      cursor: pointer; transition: all .2s;
+      font-family: inherit; font-size: 12px; letter-spacing: 1px; cursor: pointer; transition: all .2s;
     }
     .timer-reset-btn:hover { color: var(--text); border-color: rgba(255,255,255,.25); }
 
-    .ring-msg {
-      text-align: center; padding: 12px;
-      font-size: 14px; letter-spacing: 2px;
-      color: var(--warn);
-      display: none;
-    }
+    .ring-msg { text-align: center; padding: 12px; font-size: 14px; letter-spacing: 2px; color: var(--warn); display: none; }
     .ring-msg.show { display: block; animation: ringFlash .8s ease-in-out infinite; }
 
-    /* ══ PAGE 4 — 录音记录 ══ */
+    /* ══ PAGE 4 ══ */
     #page4 {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      padding: 40px 20px;
-      gap: 24px;
+      display: none; flex-direction: column; align-items: center;
+      padding: 40px 20px; gap: 24px;
     }
     #page4.active { display: flex; }
 
     .rec4-card { width: 100%; max-width: 780px; }
 
-    /* 主状态显示 */
     .rec4-status {
       text-align: center; padding: 36px 20px 28px;
       background: rgba(0,0,0,.3); border: 1px solid var(--border);
@@ -445,15 +422,11 @@
     }
     .rec4-status.recording { border-color: var(--err); animation: recPulse 1.4s ease-in-out infinite; }
     .rec4-status.stopped   { border-color: rgba(0,255,150,.4); }
-    @keyframes recPulse {
-      0%,100% { box-shadow: none; }
-      50%      { box-shadow: 0 0 28px rgba(255,77,109,.25); }
-    }
+    @keyframes recPulse { 0%,100% { box-shadow: none; } 50% { box-shadow: 0 0 28px rgba(255,77,109,.25); } }
+
     .rec4-elapsed {
       font-size: clamp(52px, 11vw, 96px); font-weight: 700;
-      color: var(--green); letter-spacing: 6px;
-      text-shadow: 0 0 20px var(--green-dim);
-      transition: color .3s;
+      color: var(--green); letter-spacing: 6px; text-shadow: 0 0 20px var(--green-dim); transition: color .3s;
     }
     .rec4-status.recording .rec4-elapsed { color: var(--err); text-shadow: 0 0 20px rgba(255,77,109,.6); }
     .rec4-elapsed-unit { font-size: 11px; letter-spacing: 4px; color: var(--dim); margin-top: 6px; }
@@ -461,20 +434,10 @@
       font-size: 12px; letter-spacing: 3px; color: var(--dim);
       margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;
     }
-    .rec4-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--dim);
-    }
-    .rec4-status.recording .rec4-dot {
-      background: var(--err); box-shadow: 0 0 8px var(--err);
-      animation: pulse 1s ease-in-out infinite;
-    }
+    .rec4-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--dim); }
+    .rec4-status.recording .rec4-dot { background: var(--err); box-shadow: 0 0 8px var(--err); animation: pulse 1s ease-in-out infinite; }
 
-    /* 间隔设置行 */
-    .rec4-interval-row {
-      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-      margin-bottom: 18px;
-    }
+    .rec4-interval-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
     .rec4-interval-label { font-size: 11px; letter-spacing: 2px; color: var(--dim); white-space: nowrap; }
     .rec4-interval-inp {
       width: 72px; text-align: center;
@@ -489,8 +452,7 @@
       background: rgba(0,0,0,.4); border: 1px solid rgba(0,255,150,.18);
       border-radius: 8px; padding: 9px 28px 9px 10px;
       color: var(--text); font-family: inherit; font-size: 13px;
-      outline: none; cursor: pointer; transition: border-color .2s;
-      appearance: none;
+      outline: none; cursor: pointer; transition: border-color .2s; appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2300ff96' opacity='.5'/%3E%3C/svg%3E");
       background-repeat: no-repeat; background-position: right 10px center;
     }
@@ -498,78 +460,49 @@
     .rec4-interval-unit-sel:disabled { opacity: .4; cursor: not-allowed; }
     .rec4-interval-hint { font-size: 11px; color: rgba(255,255,255,.2); letter-spacing: 1px; }
 
-    /* 操作按钮 */
     .rec4-btn-row { display: flex; gap: 10px; }
     .rec4-start-btn {
-      flex: 1; padding: 16px;
-      border-radius: 10px; border: 1px solid rgba(255,77,109,.4);
+      flex: 1; padding: 16px; border-radius: 10px; border: 1px solid rgba(255,77,109,.4);
       background: rgba(255,77,109,.06); color: var(--err);
-      font-family: inherit; font-size: 13px; letter-spacing: 2px;
-      cursor: pointer; transition: all .25s;
+      font-family: inherit; font-size: 13px; letter-spacing: 2px; cursor: pointer; transition: all .25s;
     }
     .rec4-start-btn:hover { background: rgba(255,77,109,.12); box-shadow: 0 0 18px rgba(255,77,109,.1); }
-    .rec4-start-btn.idle {
-      border-color: rgba(0,255,150,.3); color: var(--green);
-      background: var(--green-faint);
-    }
+    .rec4-start-btn.idle { border-color: rgba(0,255,150,.3); color: var(--green); background: var(--green-faint); }
     .rec4-start-btn.idle:hover { background: rgba(0,255,150,.14); box-shadow: 0 0 18px rgba(0,255,150,.1); }
     .rec4-mark-btn {
-      padding: 16px 22px;
-      border-radius: 10px; border: 1px solid rgba(255,171,64,.3);
+      padding: 16px 22px; border-radius: 10px; border: 1px solid rgba(255,171,64,.3);
       background: rgba(255,171,64,.06); color: var(--warn);
-      font-family: inherit; font-size: 12px; letter-spacing: 2px;
-      cursor: pointer; transition: all .2s;
+      font-family: inherit; font-size: 12px; letter-spacing: 2px; cursor: pointer; transition: all .2s;
     }
     .rec4-mark-btn:hover { background: rgba(255,171,64,.12); }
     .rec4-mark-btn:disabled { opacity: .3; cursor: not-allowed; }
 
-    /* 标记列表 */
-    .rec4-marks-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 12px;
-    }
+    .rec4-marks-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
     .rec4-marks-title { font-size: 11px; letter-spacing: 3px; color: var(--green-dim); }
     .rec4-marks-count {
       font-size: 11px; letter-spacing: 2px; color: var(--dim);
       background: rgba(0,255,150,.06); border: 1px solid rgba(0,255,150,.15);
       border-radius: 20px; padding: 3px 12px;
     }
-    .rec4-marks-list {
-      display: flex; flex-direction: column; gap: 8px;
-      max-height: 220px; overflow-y: auto;
-      padding-right: 4px;
-    }
+    .rec4-marks-list { display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; padding-right: 4px; }
     .rec4-marks-list::-webkit-scrollbar { width: 4px; }
     .rec4-marks-list::-webkit-scrollbar-track { background: transparent; }
     .rec4-marks-list::-webkit-scrollbar-thumb { background: rgba(0,255,150,.2); border-radius: 2px; }
-    .rec4-mark-item {
-      display: flex; align-items: center; gap: 14px;
-      background: rgba(0,0,0,.25); border: 1px solid rgba(255,255,255,.06);
-      border-radius: 8px; padding: 10px 14px;
-      font-size: 13px;
-    }
+    .rec4-mark-item { display: flex; align-items: center; gap: 14px; background: rgba(0,0,0,.25); border: 1px solid rgba(255,255,255,.06); border-radius: 8px; padding: 10px 14px; font-size: 13px; }
     .rec4-mark-item.auto { border-left: 2px solid rgba(255,171,64,.4); }
     .rec4-mark-item.manual { border-left: 2px solid rgba(0,255,150,.4); }
     .rec4-mark-idx { color: var(--dim); font-size: 11px; letter-spacing: 1px; min-width: 28px; }
     .rec4-mark-elapsed { color: var(--green); font-weight: 600; letter-spacing: 1px; min-width: 72px; }
     .rec4-mark-abs { color: var(--dim); font-size: 12px; }
-    .rec4-mark-type { font-size: 10px; letter-spacing: 1px; margin-left: auto;
-      padding: 2px 8px; border-radius: 10px; }
+    .rec4-mark-type { font-size: 10px; letter-spacing: 1px; margin-left: auto; padding: 2px 8px; border-radius: 10px; }
     .rec4-mark-item.auto  .rec4-mark-type { color: var(--warn); background: rgba(255,171,64,.08); }
     .rec4-mark-item.manual .rec4-mark-type { color: var(--green); background: rgba(0,255,150,.08); }
     .rec4-empty { text-align: center; padding: 24px; font-size: 12px; color: rgba(255,255,255,.15); letter-spacing: 2px; }
 
-    /* 汇总 */
-    .rec4-summary {
-      background: rgba(0,0,0,.3); border: 1px solid rgba(0,255,150,.2);
-      border-radius: 12px; padding: 20px 24px;
-      display: none;
-    }
+    .rec4-summary { background: rgba(0,0,0,.3); border: 1px solid rgba(0,255,150,.2); border-radius: 12px; padding: 20px 24px; display: none; }
     .rec4-summary.show { display: block; }
     .rec4-summary-title { font-size: 11px; letter-spacing: 3px; color: var(--green-dim); margin-bottom: 16px; }
-    .rec4-summary-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px;
-    }
+    .rec4-summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; }
     .rec4-sum-item { display: flex; flex-direction: column; gap: 4px; }
     .rec4-sum-label { font-size: 10px; letter-spacing: 2px; color: var(--dim); }
     .rec4-sum-val { font-size: 17px; color: var(--green); letter-spacing: 1px; font-weight: 600; }
@@ -577,16 +510,15 @@
 
     @media (max-width: 600px) {
       .card { padding: 20px; }
-      .rec-slots, .rate-grid, .result-grid { grid-template-columns: 1fr; }
-      .result-box { grid-column: 1; }
+      .rec-slots { grid-template-columns: 1fr; }
       .meta { gap: 16px; }
       .rec4-summary-grid { grid-template-columns: 1fr 1fr; }
+      .field-group { flex: 1 1 100%; }
     }
   </style>
 </head>
 <body>
 
-<!-- 导航 -->
 <nav class="tab-nav">
   <button class="tab-btn active" onclick="showPage(1, this)">⏱  时间戳</button>
   <button class="tab-btn" onclick="showPage(2, this)">📊  计算时间隔</button>
@@ -594,10 +526,8 @@
   <button class="tab-btn" onclick="showPage(4, this)">🎙  录音记录</button>
 </nav>
 
-<!-- ══════════════ PAGE 1 ══════════════ -->
+<!-- PAGE 1 -->
 <div id="page1" class="page active">
-
-  <!-- 实时时间戳 -->
   <div class="card">
     <div class="live-badge"><div class="dot"></div>LIVE</div>
     <div class="ts-label">UNIX TIMESTAMP</div>
@@ -615,7 +545,6 @@
     </div>
   </div>
 
-  <!-- Unix → 时间 -->
   <div class="card">
     <div class="conv-title">UNIX TIMESTAMP  →  日期时间</div>
     <div class="conv-row">
@@ -628,7 +557,6 @@
     </div>
   </div>
 
-  <!-- 时间 → Unix -->
   <div class="card">
     <div class="conv-title">日期时间  →  UNIX TIMESTAMP</div>
     <div class="conv-row">
@@ -640,21 +568,15 @@
       <div class="conv-result" id="dt2ts-out">—</div>
     </div>
   </div>
-
 </div>
 
-<!-- ══════════════ PAGE 2 ══════════════ -->
+<!-- PAGE 2 -->
 <div id="page2" class="page">
 
-  <!-- 时间间隔记录 -->
   <div class="card" style="max-width:780px;width:100%">
     <div class="section-title">⏱  时间间隔记录</div>
     <div class="rec-area">
-
-      <button class="rec-btn" id="recBtn" onclick="record()">
-        点击记录开始时间
-      </button>
-
+      <button class="rec-btn" id="recBtn" onclick="record()">点击记录开始时间</button>
       <div class="rec-slots">
         <div class="rec-slot" id="slotA">
           <div class="rec-slot-label">开始时间</div>
@@ -667,21 +589,18 @@
           <div class="rec-slot-human" id="htB">—</div>
         </div>
       </div>
-
       <div class="interval-display">
         <div class="interval-label">时间间隔</div>
         <div class="interval-val" id="ivVal">—</div>
         <div class="interval-unit" id="ivUnit"></div>
         <div class="interval-breakdown" id="ivBreak"></div>
       </div>
-
       <div style="text-align:center">
         <button class="reset-btn" onclick="resetRec()">重置</button>
       </div>
     </div>
   </div>
 
-  <!-- 传输速率计算 -->
   <div class="card" style="max-width:780px;width:100%">
     <div class="section-title">📡  平均传输速率计算</div>
     <div class="rate-grid">
@@ -717,44 +636,23 @@
       <div class="result-box">
         <div class="field-label">计算结果</div>
         <div class="result-grid">
-          <div class="result-item">
-            <span class="r-label">KB/s</span>
-            <span class="r-val" id="r-kbs">—</span>
-          </div>
-          <div class="result-item">
-            <span class="r-label">MB/s</span>
-            <span class="r-val" id="r-mbs">—</span>
-          </div>
-          <div class="result-item">
-            <span class="r-label">Kbps（网络）</span>
-            <span class="r-val" id="r-kbps">—</span>
-          </div>
-          <div class="result-item">
-            <span class="r-label">Mbps（网络）</span>
-            <span class="r-val" id="r-mbps">—</span>
-          </div>
-          <div class="result-item">
-            <span class="r-label">传输时间</span>
-            <span class="r-val" id="r-time">—</span>
-          </div>
-          <div class="result-item">
-            <span class="r-label">文件大小</span>
-            <span class="r-val" id="r-size">—</span>
-          </div>
+          <div class="result-item"><span class="r-label">KB/s</span><span class="r-val" id="r-kbs">—</span></div>
+          <div class="result-item"><span class="r-label">MB/s</span><span class="r-val" id="r-mbs">—</span></div>
+          <div class="result-item"><span class="r-label">Kbps（网络）</span><span class="r-val" id="r-kbps">—</span></div>
+          <div class="result-item"><span class="r-label">Mbps（网络）</span><span class="r-val" id="r-mbps">—</span></div>
+          <div class="result-item"><span class="r-label">传输时间</span><span class="r-val" id="r-time">—</span></div>
+          <div class="result-item"><span class="r-label">文件大小</span><span class="r-val" id="r-size">—</span></div>
         </div>
       </div>
 
-      <button class="calc-btn" style="grid-column:1/-1" onclick="calcRate()">
-        计算传输速率
-      </button>
+      <button class="calc-btn" onclick="calcRate()">计算传输速率</button>
     </div>
   </div>
 
 </div>
 
-<!-- ══════════════ PAGE 3 ══════════════ -->
+<!-- PAGE 3 -->
 <div id="page3" class="page">
-
   <div class="timer-top-row">
     <div class="section-title" style="margin:0;border:none;padding:0">🔔  自定义倒计时</div>
     <div style="display:flex;align-items:center;gap:12px">
@@ -762,21 +660,13 @@
       <button class="add-timer-btn" id="add-timer-btn" onclick="addTimer()">＋ 添加计时器</button>
     </div>
   </div>
-
-  <div id="timer-list" style="width:100%;max-width:780px;display:flex;flex-direction:column;gap:24px">
-    <!-- 计时器卡片由 JS 动态注入 -->
-  </div>
-
+  <div id="timer-list" style="width:100%;max-width:780px;display:flex;flex-direction:column;gap:24px"></div>
 </div>
 
-<!-- ══════════════ PAGE 4 ══════════════ -->
+<!-- PAGE 4 -->
 <div id="page4" class="page">
-
-  <!-- 主控卡片 -->
   <div class="card rec4-card">
     <div class="section-title" style="margin:0 0 20px;border:none;padding:0">🎙  录音时间记录</div>
-
-    <!-- 主状态显示 -->
     <div class="rec4-status" id="rec4-status">
       <div class="rec4-elapsed" id="rec4-elapsed">00:00:00</div>
       <div class="rec4-elapsed-unit">录音时长</div>
@@ -785,33 +675,26 @@
         <span id="rec4-state-txt">等待开始</span>
       </div>
     </div>
-
-    <!-- 开始时间信息（录音开始后显示） -->
     <div class="timer-start-info" id="rec4-start-info" style="display:none;margin-bottom:18px">
       <div>开始时间：<span id="rec4-start-human">—</span></div>
       <div>Unix 时间戳：<span id="rec4-start-unix">—</span></div>
     </div>
-
-    <!-- 间隔提醒设置 -->
     <div class="rec4-interval-row">
       <span class="rec4-interval-label">每隔</span>
-      <input class="rec4-interval-inp" id="rec4-interval" type="number" min="1" max="9999" value="5" aria-label="提醒间隔数值">
-      <select class="rec4-interval-unit-sel" id="rec4-interval-unit" aria-label="时间单位">
+      <input class="rec4-interval-inp" id="rec4-interval" type="number" min="1" max="9999" value="5">
+      <select class="rec4-interval-unit-sel" id="rec4-interval-unit">
         <option value="1">秒</option>
         <option value="60" selected>分钟</option>
         <option value="3600">小时</option>
       </select>
       <span class="rec4-interval-hint">自动添加一个标记</span>
     </div>
-
-    <!-- 操作按钮 -->
     <div class="rec4-btn-row">
       <button class="rec4-start-btn idle" id="rec4-start-btn" onclick="rec4Start()">● 开始录音</button>
       <button class="rec4-mark-btn" id="rec4-mark-btn" onclick="rec4ManualMark()" disabled>＋ 手动标记</button>
     </div>
   </div>
 
-  <!-- 标记列表 -->
   <div class="card rec4-card">
     <div class="rec4-marks-header">
       <span class="rec4-marks-title">标记记录</span>
@@ -822,46 +705,25 @@
     </div>
   </div>
 
-  <!-- 汇总 -->
   <div class="card rec4-card">
     <div class="rec4-summary" id="rec4-summary">
       <div class="rec4-summary-title">录音汇总</div>
       <div class="rec4-summary-grid">
-        <div class="rec4-sum-item">
-          <span class="rec4-sum-label">开始时间</span>
-          <span class="rec4-sum-val" id="sum-start">—</span>
-        </div>
-        <div class="rec4-sum-item">
-          <span class="rec4-sum-label">结束时间</span>
-          <span class="rec4-sum-val" id="sum-end">—</span>
-        </div>
-        <div class="rec4-sum-item">
-          <span class="rec4-sum-label">录音时长</span>
-          <span class="rec4-sum-val" id="sum-duration">—</span>
-        </div>
-        <div class="rec4-sum-item">
-          <span class="rec4-sum-label">总标记数</span>
-          <span class="rec4-sum-val big" id="sum-marks">—</span>
-        </div>
-        <div class="rec4-sum-item">
-          <span class="rec4-sum-label">自动标记</span>
-          <span class="rec4-sum-val" id="sum-auto">—</span>
-        </div>
-        <div class="rec4-sum-item">
-          <span class="rec4-sum-label">手动标记</span>
-          <span class="rec4-sum-val" id="sum-manual">—</span>
-        </div>
+        <div class="rec4-sum-item"><span class="rec4-sum-label">开始时间</span><span class="rec4-sum-val" id="sum-start">—</span></div>
+        <div class="rec4-sum-item"><span class="rec4-sum-label">结束时间</span><span class="rec4-sum-val" id="sum-end">—</span></div>
+        <div class="rec4-sum-item"><span class="rec4-sum-label">录音时长</span><span class="rec4-sum-val" id="sum-duration">—</span></div>
+        <div class="rec4-sum-item"><span class="rec4-sum-label">总标记数</span><span class="rec4-sum-val big" id="sum-marks">—</span></div>
+        <div class="rec4-sum-item"><span class="rec4-sum-label">自动标记</span><span class="rec4-sum-val" id="sum-auto">—</span></div>
+        <div class="rec4-sum-item"><span class="rec4-sum-label">手动标记</span><span class="rec4-sum-val" id="sum-manual">—</span></div>
       </div>
     </div>
     <div style="text-align:center;margin-top:12px">
       <button class="timer-reset-btn" onclick="rec4Reset()" style="width:100%;padding:13px;letter-spacing:2px">重置 / 新录音</button>
     </div>
   </div>
-
 </div>
 
 <script>
-// ── Tab 切换 ──────────────────────────────────────────────────
 function showPage(n, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -869,10 +731,8 @@ function showPage(n, btn) {
   btn.classList.add('active');
 }
 
-// ── 实时时间戳 ────────────────────────────────────────────────
 const digitsEl = document.getElementById('digits');
 let prevDigs = '';
-
 for (let i = 0; i < 10; i++) {
   const s = document.createElement('span');
   s.className = 'ts-digit'; s.id = `d${i}`; s.textContent = '0';
@@ -888,11 +748,8 @@ function tzLabel() {
 }
 
 function tick() {
-  const now = new Date();
-  const ts  = Math.floor(now.getTime() / 1000);
-  const ms  = now.getMilliseconds();
-  const str = String(ts).padStart(10, '0');
-
+  const now = new Date(), ts = Math.floor(now.getTime()/1000), ms = now.getMilliseconds();
+  const str = String(ts).padStart(10,'0');
   for (let i = 0; i < 10; i++) {
     const el = document.getElementById(`d${i}`);
     if (str[i] !== prevDigs[i]) {
@@ -903,9 +760,7 @@ function tick() {
     }
   }
   prevDigs = str;
-
   document.getElementById('ms').textContent = pad(ms, 3);
-
   const Y=now.getFullYear(), Mo=pad(now.getMonth()+1), D=pad(now.getDate());
   const H=pad(now.getHours()), Mi=pad(now.getMinutes()), S=pad(now.getSeconds());
   document.getElementById('human').textContent    = `${Y}-${Mo}-${D} ${H}:${Mi}:${S}`;
@@ -916,7 +771,7 @@ function tick() {
 tick(); setInterval(tick, 50);
 
 function copyTS() {
-  const ts = Math.floor(Date.now() / 1000);
+  const ts = Math.floor(Date.now()/1000);
   const btn = document.getElementById('copyBtn');
   navigator.clipboard.writeText(String(ts)).then(() => {
     btn.textContent = 'COPIED  ✓'; btn.classList.add('ok');
@@ -924,17 +779,14 @@ function copyTS() {
   });
 }
 
-// ── 转换：Unix → 时间 ─────────────────────────────────────────
 function fillNow(id) { document.getElementById(id).value = Math.floor(Date.now()/1000); }
 
 function ts2dt() {
-  const v   = parseInt(document.getElementById('ts2dt-in').value);
+  const v = parseInt(document.getElementById('ts2dt-in').value);
   const out = document.getElementById('ts2dt-out');
   if (isNaN(v)) { out.textContent = '请输入有效的时间戳'; out.className = 'conv-result err'; return; }
-
-  const d = new Date(v * 1000);
+  const d = new Date(v*1000);
   if (isNaN(d)) { out.textContent = '无效时间戳'; out.className = 'conv-result err'; return; }
-
   const Y=d.getFullYear(), Mo=pad(d.getMonth()+1), D=pad(d.getDate());
   const H=pad(d.getHours()), Mi=pad(d.getMinutes()), S=pad(d.getSeconds());
   const days = ['日','一','二','三','四','五','六'];
@@ -942,222 +794,157 @@ function ts2dt() {
   out.className = 'conv-result';
 }
 
-// ── 转换：时间 → Unix ─────────────────────────────────────────
 function fillNowDT() {
-  const now = new Date();
-  const local = new Date(now - now.getTimezoneOffset() * 60000);
-  document.getElementById('dt2ts-in').value = local.toISOString().slice(0, 19);
+  const now = new Date(), local = new Date(now - now.getTimezoneOffset()*60000);
+  document.getElementById('dt2ts-in').value = local.toISOString().slice(0,19);
 }
 
 function dt2ts() {
-  const v   = document.getElementById('dt2ts-in').value;
+  const v = document.getElementById('dt2ts-in').value;
   const out = document.getElementById('dt2ts-out');
   if (!v) { out.textContent = '请选择日期时间'; out.className = 'conv-result err'; return; }
-
-  const ts = Math.floor(new Date(v).getTime() / 1000);
+  const ts = Math.floor(new Date(v).getTime()/1000);
   if (isNaN(ts)) { out.textContent = '无效日期'; out.className = 'conv-result err'; return; }
-  out.textContent = `Unix 时间戳: ${ts}  （毫秒: ${ts * 1000}）`;
+  out.textContent = `Unix 时间戳: ${ts}  （毫秒: ${ts*1000}）`;
   out.className = 'conv-result';
 }
 
-// ── 时间间隔记录 ──────────────────────────────────────────────
-let recState = 0;   // 0=待开始  1=已记开始
-let tsStart = null, tsEnd = null;
+let recState = 0, tsStart = null, tsEnd = null;
 
 function record() {
-  const now = Date.now();
-  const btn = document.getElementById('recBtn');
-
+  const now = Date.now(), btn = document.getElementById('recBtn');
   if (recState === 0) {
     tsStart = now; tsEnd = null;
-    renderSlot('A', now);
-    clearSlot('B');
-    clearInterval_display();
+    renderSlot('A', now); clearSlot('B'); clearInterval_display();
     btn.textContent = '✅ 开始已记录 — 点击记录结束时间';
-    btn.classList.add('armed');
-    recState = 1;
+    btn.classList.add('armed'); recState = 1;
   } else {
-    tsEnd = now;
-    renderSlot('B', now);
+    tsEnd = now; renderSlot('B', now);
     btn.textContent = '点击记录开始时间';
-    btn.classList.remove('armed');
-    recState = 0;
-    showInterval();
+    btn.classList.remove('armed'); recState = 0; showInterval();
   }
 }
 
 function renderSlot(ab, ms) {
-  const d = new Date(ms);
-  const ts = Math.floor(ms / 1000);
+  const d = new Date(ms), ts = Math.floor(ms/1000);
   const Y=d.getFullYear(), Mo=pad(d.getMonth()+1), D=pad(d.getDate());
   const H=pad(d.getHours()), Mi=pad(d.getMinutes()), S=pad(d.getSeconds()), MS=pad(d.getMilliseconds(),3);
   document.getElementById(`ts${ab}`).textContent = `${ts}.${MS}`;
   document.getElementById(`ht${ab}`).textContent = `${Y}-${Mo}-${D} ${H}:${Mi}:${S}.${MS}`;
   document.getElementById(`slot${ab}`).classList.add('set');
 }
-
 function clearSlot(ab) {
   document.getElementById(`ts${ab}`).textContent = '—';
   document.getElementById(`ht${ab}`).textContent = '—';
   document.getElementById(`slot${ab}`).classList.remove('set');
 }
-
 function clearInterval_display() {
   document.getElementById('ivVal').textContent = '—';
   document.getElementById('ivUnit').textContent = '';
   document.getElementById('ivBreak').textContent = '';
 }
-
 function showInterval() {
-  if (tsStart === null || tsEnd === null) return;
-  const diffMs = Math.abs(tsEnd - tsStart);
-  const diffS  = diffMs / 1000;
-
-  const h  = Math.floor(diffS / 3600);
-  const m  = Math.floor((diffS % 3600) / 60);
-  const s  = Math.floor(diffS % 60);
-  const ms = diffMs % 1000;
-
+  if (!tsStart || !tsEnd) return;
+  const diffMs = Math.abs(tsEnd-tsStart), diffS = diffMs/1000;
+  const h=Math.floor(diffS/3600), m=Math.floor((diffS%3600)/60), s=Math.floor(diffS%60), ms=diffMs%1000;
   let mainVal, mainUnit;
-  if (diffMs < 1000)       { mainVal = diffMs.toFixed(0);  mainUnit = 'ms（毫秒）'; }
-  else if (diffS < 60)     { mainVal = diffS.toFixed(3);   mainUnit = 's（秒）'; }
-  else if (diffS < 3600)   { mainVal = (diffS/60).toFixed(2); mainUnit = 'min（分钟）'; }
-  else                     { mainVal = (diffS/3600).toFixed(3); mainUnit = 'h（小时）'; }
-
+  if (diffMs<1000)     { mainVal=diffMs.toFixed(0); mainUnit='ms（毫秒）'; }
+  else if (diffS<60)   { mainVal=diffS.toFixed(3);  mainUnit='s（秒）'; }
+  else if (diffS<3600) { mainVal=(diffS/60).toFixed(2); mainUnit='min（分钟）'; }
+  else                 { mainVal=(diffS/3600).toFixed(3); mainUnit='h（小时）'; }
   document.getElementById('ivVal').textContent   = mainVal;
   document.getElementById('ivUnit').textContent  = mainUnit;
-  document.getElementById('ivBreak').textContent =
-    `${h > 0 ? h+'h ' : ''}${m > 0 ? m+'m ' : ''}${s}s ${ms}ms  ·  共 ${diffMs} ms`;
+  document.getElementById('ivBreak').textContent = `${h>0?h+'h ':''}${m>0?m+'m ':''}${s}s ${ms}ms  ·  共 ${diffMs} ms`;
 }
-
 function resetRec() {
-  tsStart = tsEnd = null; recState = 0;
+  tsStart=tsEnd=null; recState=0;
   clearSlot('A'); clearSlot('B'); clearInterval_display();
-  const btn = document.getElementById('recBtn');
-  btn.textContent = '点击记录开始时间';
-  btn.classList.remove('armed');
+  const btn=document.getElementById('recBtn');
+  btn.textContent='点击记录开始时间'; btn.classList.remove('armed');
 }
 
-// ── 传输速率计算 ──────────────────────────────────────────────
 function fillInterval() {
-  if (tsStart === null || tsEnd === null) { alert('请先在上方完成时间间隔记录'); return; }
-  const diffMs = Math.abs(tsEnd - tsStart);
-  document.getElementById('xferTime').value = diffMs;
+  if (!tsStart||!tsEnd) { alert('请先在上方完成时间间隔记录'); return; }
+  document.getElementById('xferTime').value = Math.abs(tsEnd-tsStart);
   document.getElementById('timeUnit').value = 'ms';
 }
 
 function calcRate() {
-  const sizeRaw  = parseFloat(document.getElementById('fileSize').value);
-  const sizeUnit = document.getElementById('sizeUnit').value;
-  const timeRaw  = parseFloat(document.getElementById('xferTime').value);
-  const timeUnit = document.getElementById('timeUnit').value;
-
-  if (isNaN(sizeRaw) || sizeRaw <= 0 || isNaN(timeRaw) || timeRaw <= 0) {
-    alert('请输入有效的文件大小和传输时间'); return;
-  }
-
-  // 转为字节
-  const unitMap = { 'B': 1, 'KB': 1024, 'MB': 1024**2, 'GB': 1024**3 };
-  const bytes = sizeRaw * unitMap[sizeUnit];
-
-  // 转为秒
-  const timeMap = { 'ms': 0.001, 's': 1, 'min': 60 };
-  const seconds = timeRaw * timeMap[timeUnit];
-
-  const kbs  = (bytes / 1024) / seconds;
-  const mbs  = kbs / 1024;
-  const kbps = (bytes * 8) / 1000 / seconds;
-  const mbps = kbps / 1000;
-
-  function fmt(n) {
-    if (n >= 1000) return n.toFixed(1);
-    if (n >= 10)   return n.toFixed(2);
-    return n.toFixed(4);
-  }
-
-  document.getElementById('r-kbs').textContent  = fmt(kbs)  + ' KB/s';
-  document.getElementById('r-mbs').textContent  = fmt(mbs)  + ' MB/s';
-  document.getElementById('r-kbps').textContent = fmt(kbps) + ' Kbps';
-  document.getElementById('r-mbps').textContent = fmt(mbps) + ' Mbps';
-
-  // 时间显示
+  const sizeRaw=parseFloat(document.getElementById('fileSize').value);
+  const sizeUnit=document.getElementById('sizeUnit').value;
+  const timeRaw=parseFloat(document.getElementById('xferTime').value);
+  const timeUnit=document.getElementById('timeUnit').value;
+  if (isNaN(sizeRaw)||sizeRaw<=0||isNaN(timeRaw)||timeRaw<=0) { alert('请输入有效的文件大小和传输时间'); return; }
+  const unitMap={B:1,KB:1024,MB:1024**2,GB:1024**3};
+  const bytes=sizeRaw*unitMap[sizeUnit];
+  const timeMap={ms:0.001,s:1,min:60};
+  const seconds=timeRaw*timeMap[timeUnit];
+  const kbs=(bytes/1024)/seconds, mbs=kbs/1024, kbps=(bytes*8)/1000/seconds, mbps=kbps/1000;
+  function fmt(n) { return n>=1000?n.toFixed(1):n>=10?n.toFixed(2):n.toFixed(4); }
+  document.getElementById('r-kbs').textContent  = fmt(kbs)+' KB/s';
+  document.getElementById('r-mbs').textContent  = fmt(mbs)+' MB/s';
+  document.getElementById('r-kbps').textContent = fmt(kbps)+' Kbps';
+  document.getElementById('r-mbps').textContent = fmt(mbps)+' Mbps';
   let td;
-  if (seconds < 1)       td = (seconds*1000).toFixed(1) + ' ms';
-  else if (seconds < 60) td = seconds.toFixed(3) + ' s';
-  else                   td = (seconds/60).toFixed(2) + ' min';
+  if (seconds<1) td=(seconds*1000).toFixed(1)+' ms';
+  else if (seconds<60) td=seconds.toFixed(3)+' s';
+  else td=(seconds/60).toFixed(2)+' min';
   document.getElementById('r-time').textContent = td;
-
-  // 大小显示
   let sd;
-  if (bytes < 1024)            sd = bytes.toFixed(0) + ' B';
-  else if (bytes < 1024**2)    sd = (bytes/1024).toFixed(2) + ' KB';
-  else if (bytes < 1024**3)    sd = (bytes/1024**2).toFixed(3) + ' MB';
-  else                         sd = (bytes/1024**3).toFixed(4) + ' GB';
+  if (bytes<1024) sd=bytes.toFixed(0)+' B';
+  else if (bytes<1024**2) sd=(bytes/1024).toFixed(2)+' KB';
+  else if (bytes<1024**3) sd=(bytes/1024**2).toFixed(3)+' MB';
+  else sd=(bytes/1024**3).toFixed(4)+' GB';
   document.getElementById('r-size').textContent = sd;
 }
 
-// ── 自定义倒计时 ──────────────────────────────────────────────
-const MAX_TIMERS = 5;
-let timerNextId = 1;
-const timers = {}; // id -> state
+const MAX_TIMERS=5; let timerNextId=1; const timers={};
 
-function fmtCountdown(remainSec) {
-  const h = Math.floor(remainSec / 3600);
-  const m = Math.floor((remainSec % 3600) / 60);
-  const s = Math.floor(remainSec % 60);
-  return h > 0 ? `${pad(h)}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
+function fmtCountdown(s) {
+  const h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sec=Math.floor(s%60);
+  return h>0?`${pad(h)}:${pad(m)}:${pad(sec)}`:`${pad(m)}:${pad(sec)}`;
 }
-
 function humanTime(ms) {
-  const d = new Date(ms);
-  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ` +
-         `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  const d=new Date(ms);
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 }
-
 function playAlert() {
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    [0, 0.35, 0.7].forEach(delay => {
-      const osc  = ctx.createOscillator();
-      const gain = ctx.createGain();
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    [0,.35,.7].forEach(delay=>{
+      const osc=ctx.createOscillator(), gain=ctx.createGain();
       osc.connect(gain); gain.connect(ctx.destination);
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(880, ctx.currentTime + delay);
-      osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + delay + 0.3);
-      gain.gain.setValueAtTime(0.6, ctx.currentTime + delay);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.4);
-      osc.start(ctx.currentTime + delay);
-      osc.stop(ctx.currentTime + delay + 0.4);
+      osc.type='sine';
+      osc.frequency.setValueAtTime(880,ctx.currentTime+delay);
+      osc.frequency.exponentialRampToValueAtTime(440,ctx.currentTime+delay+.3);
+      gain.gain.setValueAtTime(.6,ctx.currentTime+delay);
+      gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+delay+.4);
+      osc.start(ctx.currentTime+delay); osc.stop(ctx.currentTime+delay+.4);
     });
-  } catch(e) {}
+  } catch(e){}
 }
 
 function addTimer() {
-  const count = Object.keys(timers).length;
-  if (count >= MAX_TIMERS) return;
-  const id = timerNextId++;
-  timers[id] = { totalSec: 0, running: false, startMs: null, endMs: null, ivId: null, done: false };
-
-  const card = document.createElement('div');
-  card.className = 'card';
-  card.id = `timer-card-${id}`;
-  card.style.width = '100%';
-
-  card.innerHTML = `
+  if (Object.keys(timers).length>=MAX_TIMERS) return;
+  const id=timerNextId++;
+  timers[id]={totalSec:0,running:false,startMs:null,endMs:null,ivId:null,done:false};
+  const card=document.createElement('div');
+  card.className='card'; card.id=`timer-card-${id}`; card.style.width='100%';
+  card.innerHTML=`
     <div class="timer-header">
-      <input class="timer-name-inp" id="tname-${id}" placeholder="计时器名称（可选）" maxlength="20" aria-label="计时器名称">
+      <input class="timer-name-inp" id="tname-${id}" placeholder="计时器名称（可选）" maxlength="20">
       <button class="timer-del-btn" id="tdel-${id}" onclick="removeTimer(${id})">删除</button>
     </div>
     <div class="timer-block" style="margin-top:16px">
       <div class="duration-row">
         <span class="duration-label">设定时长</span>
-        <input class="duration-inp" id="th-${id}" type="number" min="0" max="23" value="0" aria-label="小时">
+        <input class="duration-inp" id="th-${id}" type="number" min="0" max="23" value="0">
         <span class="duration-unit">时</span>
         <span class="duration-sep">:</span>
-        <input class="duration-inp" id="tm-${id}" type="number" min="0" max="59" value="25" aria-label="分钟">
+        <input class="duration-inp" id="tm-${id}" type="number" min="0" max="59" value="25">
         <span class="duration-unit">分</span>
         <span class="duration-sep">:</span>
-        <input class="duration-inp" id="ts-${id}" type="number" min="0" max="59" value="0" aria-label="秒">
+        <input class="duration-inp" id="ts-${id}" type="number" min="0" max="59" value="0">
         <span class="duration-unit">秒</span>
       </div>
       <div class="countdown-display" id="cd-display-${id}">
@@ -1174,320 +961,186 @@ function addTimer() {
         <button class="timer-start-btn" id="cd-btn-${id}" onclick="timerAction(${id})">开始计时</button>
         <button class="timer-reset-btn" onclick="timerReset(${id})">重置</button>
       </div>
-    </div>
-  `;
-
+    </div>`;
   document.getElementById('timer-list').appendChild(card);
   updateTimerCountUI();
 }
 
 function removeTimer(id) {
-  const st = timers[id];
-  if (st && st.running) return;
-  if (st && st.ivId) clearInterval(st.ivId);
+  const st=timers[id];
+  if (st&&st.running) return;
+  if (st&&st.ivId) clearInterval(st.ivId);
   delete timers[id];
-  const card = document.getElementById(`timer-card-${id}`);
+  const card=document.getElementById(`timer-card-${id}`);
   if (card) card.remove();
   updateTimerCountUI();
 }
-
 function updateTimerCountUI() {
-  const count = Object.keys(timers).length;
-  const lbl = document.getElementById('timer-count-lbl');
-  const addBtn = document.getElementById('add-timer-btn');
-  if (lbl) lbl.textContent = `${count} / ${MAX_TIMERS}`;
-  if (addBtn) addBtn.disabled = count >= MAX_TIMERS;
+  const count=Object.keys(timers).length;
+  const lbl=document.getElementById('timer-count-lbl');
+  const addBtn=document.getElementById('add-timer-btn');
+  if (lbl) lbl.textContent=`${count} / ${MAX_TIMERS}`;
+  if (addBtn) addBtn.disabled=count>=MAX_TIMERS;
 }
-
 function getTimerTotalSec(id) {
-  const h = Math.max(0, parseInt(document.getElementById(`th-${id}`).value) || 0);
-  const m = Math.max(0, parseInt(document.getElementById(`tm-${id}`).value) || 0);
-  const s = Math.max(0, parseInt(document.getElementById(`ts-${id}`).value) || 0);
-  return h * 3600 + m * 60 + s;
+  const h=Math.max(0,parseInt(document.getElementById(`th-${id}`).value)||0);
+  const m=Math.max(0,parseInt(document.getElementById(`tm-${id}`).value)||0);
+  const s=Math.max(0,parseInt(document.getElementById(`ts-${id}`).value)||0);
+  return h*3600+m*60+s;
 }
-
 function timerTick(id) {
-  const st = timers[id];
-  const remain = Math.max(0, (st.endMs - Date.now()) / 1000);
-
-  document.getElementById(`cd-num-${id}`).textContent = fmtCountdown(remain);
-  const pct = st.totalSec > 0 ? Math.round((1 - remain / st.totalSec) * 100) : 0;
-  document.getElementById(`cd-sub-${id}`).textContent = `已用 ${pct}%`;
-
-  if (remain <= 0 && !st.done) {
-    st.done = true;
-    clearInterval(st.ivId);
-    st.running = false;
-    document.getElementById(`cd-num-${id}`).textContent = fmtCountdown(0);
-    document.getElementById(`cd-sub-${id}`).textContent = '已完成！';
+  const st=timers[id];
+  const remain=Math.max(0,(st.endMs-Date.now())/1000);
+  document.getElementById(`cd-num-${id}`).textContent=fmtCountdown(remain);
+  const pct=st.totalSec>0?Math.round((1-remain/st.totalSec)*100):0;
+  document.getElementById(`cd-sub-${id}`).textContent=`已用 ${pct}%`;
+  if (remain<=0&&!st.done) {
+    st.done=true; clearInterval(st.ivId); st.running=false;
+    document.getElementById(`cd-num-${id}`).textContent=fmtCountdown(0);
+    document.getElementById(`cd-sub-${id}`).textContent='已完成！';
     document.getElementById(`cd-display-${id}`).classList.add('ringing');
-    const label = document.getElementById(`tname-${id}`).value.trim() || '计时';
-    document.getElementById(`cd-ring-${id}`).textContent = `🔔 时间到！${label}已到达`;
+    const label=document.getElementById(`tname-${id}`).value.trim()||'计时';
+    document.getElementById(`cd-ring-${id}`).textContent=`🔔 时间到！${label}已到达`;
     document.getElementById(`cd-ring-${id}`).classList.add('show');
-    const btn = document.getElementById(`cd-btn-${id}`);
-    btn.textContent = '已到时 — 重新开始';
-    btn.classList.remove('running'); btn.classList.add('done');
-    document.getElementById(`tdel-${id}`).disabled = false;
-    playAlert();
-    setTimeout(playAlert, 1500);
-    setTimeout(playAlert, 3000);
+    const btn=document.getElementById(`cd-btn-${id}`);
+    btn.textContent='已到时 — 重新开始'; btn.classList.remove('running'); btn.classList.add('done');
+    document.getElementById(`tdel-${id}`).disabled=false;
+    playAlert(); setTimeout(playAlert,1500); setTimeout(playAlert,3000);
   }
 }
-
 function timerAction(id) {
-  const st  = timers[id];
-  const btn = document.getElementById(`cd-btn-${id}`);
-
-  if (st.done) {
-    timerReset(id);
-    timerAction(id);
-    return;
-  }
-
+  const st=timers[id], btn=document.getElementById(`cd-btn-${id}`);
+  if (st.done) { timerReset(id); timerAction(id); return; }
   if (!st.running) {
-    if (st._pausedRemainMs !== undefined) {
-      // 从暂停恢复
-      st.running = true;
-      st.endMs   = Date.now() + st._pausedRemainMs;
-      delete st._pausedRemainMs;
-      btn.textContent = '计时中 — 点击暂停';
-      btn.classList.add('running');
-      timerTick(id);
-      st.ivId = setInterval(() => timerTick(id), 500);
+    if (st._pausedRemainMs!==undefined) {
+      st.running=true; st.endMs=Date.now()+st._pausedRemainMs; delete st._pausedRemainMs;
+      btn.textContent='计时中 — 点击暂停'; btn.classList.add('running');
+      timerTick(id); st.ivId=setInterval(()=>timerTick(id),500);
     } else {
-      // 全新开始
-      const total = getTimerTotalSec(id);
-      if (total <= 0) return;
-      st.totalSec = total;
-      st.running  = true;
-      st.done     = false;
-      st.startMs  = Date.now();
-      st.endMs    = st.startMs + total * 1000;
-      ['th','tm','ts'].forEach(p => { document.getElementById(`${p}-${id}`).disabled = true; });
-      document.getElementById(`tdel-${id}`).disabled = true;
-      document.getElementById(`cd-info-${id}`).style.display = 'flex';
-      document.getElementById(`cd-start-${id}`).textContent = humanTime(st.startMs);
-      document.getElementById(`cd-end-${id}`).textContent   = humanTime(st.endMs);
-      btn.textContent = '计时中 — 点击暂停';
-      btn.classList.add('running'); btn.classList.remove('done');
-      timerTick(id);
-      st.ivId = setInterval(() => timerTick(id), 500);
+      const total=getTimerTotalSec(id); if (total<=0) return;
+      st.totalSec=total; st.running=true; st.done=false; st.startMs=Date.now(); st.endMs=st.startMs+total*1000;
+      ['th','tm','ts'].forEach(p=>{ document.getElementById(`${p}-${id}`).disabled=true; });
+      document.getElementById(`tdel-${id}`).disabled=true;
+      document.getElementById(`cd-info-${id}`).style.display='flex';
+      document.getElementById(`cd-start-${id}`).textContent=humanTime(st.startMs);
+      document.getElementById(`cd-end-${id}`).textContent=humanTime(st.endMs);
+      btn.textContent='计时中 — 点击暂停'; btn.classList.add('running'); btn.classList.remove('done');
+      timerTick(id); st.ivId=setInterval(()=>timerTick(id),500);
     }
   } else {
-    // 暂停
-    clearInterval(st.ivId);
-    st.running = false;
-    st._pausedRemainMs = Math.max(0, st.endMs - Date.now());
-    btn.textContent = '继续计时';
-    btn.classList.remove('running');
+    clearInterval(st.ivId); st.running=false; st._pausedRemainMs=Math.max(0,st.endMs-Date.now());
+    btn.textContent='继续计时'; btn.classList.remove('running');
   }
 }
-
 function timerReset(id) {
-  const st = timers[id];
-  if (!st) return;
+  const st=timers[id]; if (!st) return;
   clearInterval(st.ivId);
-  Object.assign(st, { totalSec: 0, running: false, startMs: null, endMs: null, ivId: null, done: false });
+  Object.assign(st,{totalSec:0,running:false,startMs:null,endMs:null,ivId:null,done:false});
   delete st._pausedRemainMs;
-  ['th','tm','ts'].forEach(p => { document.getElementById(`${p}-${id}`).disabled = false; });
-  document.getElementById(`tdel-${id}`).disabled = false;
-  document.getElementById(`cd-num-${id}`).textContent = '—:——';
-  document.getElementById(`cd-sub-${id}`).textContent = '尚未开始';
+  ['th','tm','ts'].forEach(p=>{ document.getElementById(`${p}-${id}`).disabled=false; });
+  document.getElementById(`tdel-${id}`).disabled=false;
+  document.getElementById(`cd-num-${id}`).textContent='—:——';
+  document.getElementById(`cd-sub-${id}`).textContent='尚未开始';
   document.getElementById(`cd-display-${id}`).classList.remove('ringing');
   document.getElementById(`cd-ring-${id}`).classList.remove('show');
-  document.getElementById(`cd-info-${id}`).style.display = 'none';
-  const btn = document.getElementById(`cd-btn-${id}`);
-  btn.textContent = '开始计时';
-  btn.classList.remove('running', 'done');
+  document.getElementById(`cd-info-${id}`).style.display='none';
+  const btn=document.getElementById(`cd-btn-${id}`);
+  btn.textContent='开始计时'; btn.classList.remove('running','done');
 }
-
-// 初始化：默认一个 25 分钟计时器
 addTimer();
 
-// ── 录音时间记录 ──────────────────────────────────────────────
-const rec4 = {
-  running: false,
-  startMs: null,
-  endMs: null,
-  elapsedIv: null,
-  intervalIv: null,
-  marks: [],          // { ms, elapsed, type: 'auto'|'manual' }
-  nextAutoMs: null,   // 下次自动标记的绝对时间
-};
-
-function rec4Fmt(totalSec) {
-  const h = Math.floor(totalSec / 3600);
-  const m = Math.floor((totalSec % 3600) / 60);
-  const s = Math.floor(totalSec % 60);
-  return `${pad(h)}:${pad(m)}:${pad(s)}`;
-}
-
-function rec4AbsTime(ms) {
-  const d = new Date(ms);
-  return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-}
-
-function rec4AbsFull(ms) {
-  const d = new Date(ms);
-  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ` +
-         `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-}
-
+const rec4={running:false,startMs:null,endMs:null,elapsedIv:null,marks:[],nextAutoMs:null};
+function rec4Fmt(s) { const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=Math.floor(s%60); return `${pad(h)}:${pad(m)}:${pad(sec)}`; }
+function rec4AbsTime(ms) { const d=new Date(ms); return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`; }
+function rec4AbsFull(ms) { const d=new Date(ms); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`; }
 function rec4AddMark(type) {
-  const now = Date.now();
-  const elapsed = (now - rec4.startMs) / 1000;
-  rec4.marks.push({ ms: now, elapsed, type });
-  rec4RenderMarks();
-  if (type === 'auto') {
-    playAlert();
-    setTimeout(playAlert, 1000);
-  }
+  const now=Date.now(), elapsed=(now-rec4.startMs)/1000;
+  rec4.marks.push({ms:now,elapsed,type}); rec4RenderMarks();
+  if (type==='auto') { playAlert(); setTimeout(playAlert,1000); }
 }
-
 function rec4RenderMarks() {
-  const list = document.getElementById('rec4-marks-list');
-  const empty = document.getElementById('rec4-empty');
-  const countEl = document.getElementById('rec4-marks-count');
-
-  countEl.textContent = `${rec4.marks.length} 个标记`;
-
-  if (rec4.marks.length === 0) {
-    empty.style.display = 'block';
-    // 移除所有 mark-item
-    list.querySelectorAll('.rec4-mark-item').forEach(el => el.remove());
-    return;
-  }
-  empty.style.display = 'none';
-
-  // 重建列表
-  list.querySelectorAll('.rec4-mark-item').forEach(el => el.remove());
-  rec4.marks.forEach((m, i) => {
-    const div = document.createElement('div');
-    div.className = `rec4-mark-item ${m.type}`;
-    div.innerHTML = `
-      <span class="rec4-mark-idx">#${i + 1}</span>
-      <span class="rec4-mark-elapsed">${Math.floor(m.elapsed)}s</span>
-      <span class="rec4-mark-abs">${rec4AbsTime(m.ms)}</span>
-      <span class="rec4-mark-type">${m.type === 'auto' ? '自动' : '手动'}</span>
-    `;
+  const list=document.getElementById('rec4-marks-list');
+  const empty=document.getElementById('rec4-empty');
+  document.getElementById('rec4-marks-count').textContent=`${rec4.marks.length} 个标记`;
+  if (rec4.marks.length===0) { empty.style.display='block'; list.querySelectorAll('.rec4-mark-item').forEach(el=>el.remove()); return; }
+  empty.style.display='none';
+  list.querySelectorAll('.rec4-mark-item').forEach(el=>el.remove());
+  rec4.marks.forEach((m,i)=>{
+    const div=document.createElement('div'); div.className=`rec4-mark-item ${m.type}`;
+    div.innerHTML=`<span class="rec4-mark-idx">#${i+1}</span><span class="rec4-mark-elapsed">${Math.floor(m.elapsed)}s</span><span class="rec4-mark-abs">${rec4AbsTime(m.ms)}</span><span class="rec4-mark-type">${m.type==='auto'?'自动':'手动'}</span>`;
     list.appendChild(div);
   });
-  // 滚动到底部
-  list.scrollTop = list.scrollHeight;
+  list.scrollTop=list.scrollHeight;
 }
-
 function rec4Tick() {
   if (!rec4.running) return;
-  const elapsed = (Date.now() - rec4.startMs) / 1000;
-  document.getElementById('rec4-elapsed').textContent = rec4Fmt(elapsed);
-
-  // 检查是否到达下一个自动标记时间
-  if (rec4.nextAutoMs && Date.now() >= rec4.nextAutoMs) {
+  document.getElementById('rec4-elapsed').textContent=rec4Fmt((Date.now()-rec4.startMs)/1000);
+  if (rec4.nextAutoMs&&Date.now()>=rec4.nextAutoMs) {
     rec4AddMark('auto');
-    // 计算下一次
-    const intervalMs = (parseInt(document.getElementById('rec4-interval').value) || 5)
-                     * (parseInt(document.getElementById('rec4-interval-unit').value) || 60) * 1000;
-    rec4.nextAutoMs += intervalMs;
+    const intervalMs=(parseInt(document.getElementById('rec4-interval').value)||5)*(parseInt(document.getElementById('rec4-interval-unit').value)||60)*1000;
+    rec4.nextAutoMs+=intervalMs;
   }
 }
-
 function rec4Start() {
   if (rec4.running) {
-    // 结束录音
-    rec4.running = false;
-    rec4.endMs = Date.now();
-    clearInterval(rec4.elapsedIv);
-
-    const statusEl = document.getElementById('rec4-status');
-    statusEl.classList.remove('recording');
-    statusEl.classList.add('stopped');
-    document.getElementById('rec4-state-txt').textContent = '录音已结束';
-    document.getElementById('rec4-elapsed').textContent = rec4Fmt((rec4.endMs - rec4.startMs) / 1000);
-
-    const btn = document.getElementById('rec4-start-btn');
-    btn.textContent = '● 开始录音';
-    btn.classList.add('idle');
-    document.getElementById('rec4-mark-btn').disabled = true;
-    document.getElementById('rec4-interval').disabled = false;
-    document.getElementById('rec4-interval-unit').disabled = false;
-
+    rec4.running=false; rec4.endMs=Date.now(); clearInterval(rec4.elapsedIv);
+    const statusEl=document.getElementById('rec4-status');
+    statusEl.classList.remove('recording'); statusEl.classList.add('stopped');
+    document.getElementById('rec4-state-txt').textContent='录音已结束';
+    document.getElementById('rec4-elapsed').textContent=rec4Fmt((rec4.endMs-rec4.startMs)/1000);
+    const btn=document.getElementById('rec4-start-btn');
+    btn.textContent='● 开始录音'; btn.classList.add('idle');
+    document.getElementById('rec4-mark-btn').disabled=true;
+    document.getElementById('rec4-interval').disabled=false;
+    document.getElementById('rec4-interval-unit').disabled=false;
     rec4ShowSummary();
   } else {
-    // 开始录音
-    rec4.running = true;
-    rec4.startMs = Date.now();
-    rec4.endMs = null;
-    rec4.marks = [];
-    rec4RenderMarks();
-
-    const intervalVal  = parseInt(document.getElementById('rec4-interval').value) || 5;
-    const unitSec      = parseInt(document.getElementById('rec4-interval-unit').value) || 60;
-    const intervalMs   = intervalVal * unitSec * 1000;
-    rec4.nextAutoMs = rec4.startMs + intervalMs;
-
-    document.getElementById('rec4-interval').disabled = true;
-    document.getElementById('rec4-interval-unit').disabled = true;
-
-    // 显示开始时间与 Unix 时间戳
-    document.getElementById('rec4-start-info').style.display = 'flex';
-    document.getElementById('rec4-start-human').textContent = rec4AbsFull(rec4.startMs);
-    document.getElementById('rec4-start-unix').textContent  = Math.floor(rec4.startMs / 1000);
-
-    const statusEl = document.getElementById('rec4-status');
-    statusEl.classList.remove('stopped');
-    statusEl.classList.add('recording');
-    document.getElementById('rec4-state-txt').textContent = '录音中';
-
-    const btn = document.getElementById('rec4-start-btn');
-    btn.textContent = '■ 结束录音';
-    btn.classList.remove('idle');
-    document.getElementById('rec4-mark-btn').disabled = false;
-
+    rec4.running=true; rec4.startMs=Date.now(); rec4.endMs=null; rec4.marks=[]; rec4RenderMarks();
+    const intervalVal=parseInt(document.getElementById('rec4-interval').value)||5;
+    const unitSec=parseInt(document.getElementById('rec4-interval-unit').value)||60;
+    rec4.nextAutoMs=rec4.startMs+intervalVal*unitSec*1000;
+    document.getElementById('rec4-interval').disabled=true;
+    document.getElementById('rec4-interval-unit').disabled=true;
+    document.getElementById('rec4-start-info').style.display='flex';
+    document.getElementById('rec4-start-human').textContent=rec4AbsFull(rec4.startMs);
+    document.getElementById('rec4-start-unix').textContent=Math.floor(rec4.startMs/1000);
+    const statusEl=document.getElementById('rec4-status');
+    statusEl.classList.remove('stopped'); statusEl.classList.add('recording');
+    document.getElementById('rec4-state-txt').textContent='录音中';
+    const btn=document.getElementById('rec4-start-btn');
+    btn.textContent='■ 结束录音'; btn.classList.remove('idle');
+    document.getElementById('rec4-mark-btn').disabled=false;
     document.getElementById('rec4-summary').classList.remove('show');
-
-    rec4.elapsedIv = setInterval(rec4Tick, 500);
+    rec4.elapsedIv=setInterval(rec4Tick,500);
   }
 }
-
-function rec4ManualMark() {
-  if (!rec4.running) return;
-  rec4AddMark('manual');
-}
-
+function rec4ManualMark() { if (!rec4.running) return; rec4AddMark('manual'); }
 function rec4ShowSummary() {
-  const duration = (rec4.endMs - rec4.startMs) / 1000;
-  const autoCount   = rec4.marks.filter(m => m.type === 'auto').length;
-  const manualCount = rec4.marks.filter(m => m.type === 'manual').length;
-
-  document.getElementById('sum-start').textContent    = rec4AbsFull(rec4.startMs);
-  document.getElementById('sum-end').textContent      = rec4AbsFull(rec4.endMs);
-  document.getElementById('sum-duration').textContent = rec4Fmt(duration);
-  document.getElementById('sum-marks').textContent    = rec4.marks.length + ' 次';
-  document.getElementById('sum-auto').textContent     = autoCount + ' 次';
-  document.getElementById('sum-manual').textContent   = manualCount + ' 次';
+  const duration=(rec4.endMs-rec4.startMs)/1000;
+  const autoCount=rec4.marks.filter(m=>m.type==='auto').length;
+  const manualCount=rec4.marks.filter(m=>m.type==='manual').length;
+  document.getElementById('sum-start').textContent=rec4AbsFull(rec4.startMs);
+  document.getElementById('sum-end').textContent=rec4AbsFull(rec4.endMs);
+  document.getElementById('sum-duration').textContent=rec4Fmt(duration);
+  document.getElementById('sum-marks').textContent=rec4.marks.length+' 次';
+  document.getElementById('sum-auto').textContent=autoCount+' 次';
+  document.getElementById('sum-manual').textContent=manualCount+' 次';
   document.getElementById('rec4-summary').classList.add('show');
 }
-
 function rec4Reset() {
-  if (rec4.running) {
-    clearInterval(rec4.elapsedIv);
-    rec4.running = false;
-  }
-  Object.assign(rec4, { running: false, startMs: null, endMs: null, elapsedIv: null, marks: [], nextAutoMs: null });
-
-  const statusEl = document.getElementById('rec4-status');
-  statusEl.classList.remove('recording', 'stopped');
-  document.getElementById('rec4-elapsed').textContent = '00:00:00';
-  document.getElementById('rec4-state-txt').textContent = '等待开始';
-
-  const btn = document.getElementById('rec4-start-btn');
-  btn.textContent = '● 开始录音';
-  btn.classList.add('idle');
-  document.getElementById('rec4-mark-btn').disabled = true;
-  document.getElementById('rec4-interval').disabled = false;
-  document.getElementById('rec4-interval-unit').disabled = false;
+  if (rec4.running) { clearInterval(rec4.elapsedIv); rec4.running=false; }
+  Object.assign(rec4,{running:false,startMs:null,endMs:null,elapsedIv:null,marks:[],nextAutoMs:null});
+  const statusEl=document.getElementById('rec4-status');
+  statusEl.classList.remove('recording','stopped');
+  document.getElementById('rec4-elapsed').textContent='00:00:00';
+  document.getElementById('rec4-state-txt').textContent='等待开始';
+  const btn=document.getElementById('rec4-start-btn');
+  btn.textContent='● 开始录音'; btn.classList.add('idle');
+  document.getElementById('rec4-mark-btn').disabled=true;
+  document.getElementById('rec4-interval').disabled=false;
+  document.getElementById('rec4-interval-unit').disabled=false;
   document.getElementById('rec4-summary').classList.remove('show');
-  document.getElementById('rec4-start-info').style.display = 'none';
+  document.getElementById('rec4-start-info').style.display='none';
   rec4RenderMarks();
 }
 </script>
