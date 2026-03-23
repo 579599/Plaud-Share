@@ -294,7 +294,7 @@
       border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 20px;
     }
 
-    /* ══ PAGE 3 — 计时提醒 ══ */
+    /* ══ PAGE 3 — 自定义倒计时 ══ */
     #page3 {
       display: none;
       flex-direction: column;
@@ -304,18 +304,58 @@
     }
     #page3.active { display: flex; }
 
+    .timer-top-row {
+      width: 100%; max-width: 780px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .timer-count-label { font-size: 11px; color: var(--dim); letter-spacing: 2px; }
+    .add-timer-btn {
+      padding: 10px 22px;
+      border-radius: 10px; border: 1px solid rgba(0,255,150,.3);
+      background: var(--green-faint); color: var(--green);
+      font-family: inherit; font-size: 12px; letter-spacing: 2px;
+      cursor: pointer; transition: all .2s;
+    }
+    .add-timer-btn:hover { background: rgba(0,255,150,.14); box-shadow: 0 0 14px rgba(0,255,150,.1); }
+    .add-timer-btn:disabled { opacity: .35; cursor: not-allowed; }
+
     .timer-block { display: flex; flex-direction: column; gap: 18px; }
 
     .timer-header {
       display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
     }
-    .timer-title { font-size: 11px; letter-spacing: 4px; color: var(--green-dim); }
-    .timer-duration-badge {
-      font-size: 10px; letter-spacing: 2px;
-      padding: 4px 12px; border-radius: 20px;
-      border: 1px solid rgba(0,255,150,.2);
-      color: var(--green-dim); background: var(--green-faint);
+    .timer-name-inp {
+      background: transparent; border: none; border-bottom: 1px solid rgba(0,255,150,.2);
+      color: var(--green-dim); font-family: inherit; font-size: 11px; letter-spacing: 3px;
+      outline: none; width: 200px; padding: 2px 4px; transition: border-color .2s;
     }
+    .timer-name-inp:focus { border-bottom-color: var(--green); color: var(--green); }
+    .timer-name-inp::placeholder { color: rgba(255,255,255,.15); }
+
+    .timer-del-btn {
+      padding: 5px 14px; border-radius: 6px;
+      border: 1px solid rgba(255,77,109,.2); background: transparent;
+      color: rgba(255,77,109,.5); font-family: inherit; font-size: 11px; letter-spacing: 1px;
+      cursor: pointer; transition: all .2s;
+    }
+    .timer-del-btn:hover { color: var(--err); border-color: rgba(255,77,109,.5); background: rgba(255,77,109,.06); }
+    .timer-del-btn:disabled { opacity: .25; cursor: not-allowed; }
+
+    .duration-row {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .duration-label { font-size: 11px; letter-spacing: 2px; color: var(--dim); margin-right: 4px; }
+    .duration-inp {
+      width: 62px; text-align: center;
+      background: rgba(0,0,0,.4); border: 1px solid rgba(0,255,150,.18);
+      border-radius: 8px; padding: 8px 6px;
+      color: var(--text); font-family: inherit; font-size: 15px;
+      outline: none; transition: border-color .2s;
+    }
+    .duration-inp:focus { border-color: rgba(0,255,150,.5); }
+    .duration-inp:disabled { opacity: .4; cursor: not-allowed; }
+    .duration-sep { color: var(--green-dim); font-size: 18px; font-weight: 700; line-height: 1; }
+    .duration-unit { font-size: 10px; color: var(--dim); letter-spacing: 1px; }
 
     .countdown-display {
       text-align: center; padding: 28px 0 20px;
@@ -339,7 +379,7 @@
     .countdown-display.ringing .countdown-num { color: var(--warn); text-shadow: 0 0 20px rgba(255,171,64,.6); }
     .countdown-unit { font-size: 11px; letter-spacing: 4px; color: var(--dim); margin-top: 6px; }
     .countdown-sub  { font-size: 12px; color: var(--dim); margin-top: 10px; letter-spacing: 1px; }
-    <!--  开始计时  -->
+
     .timer-start-info {
       background: rgba(0,0,0,.25); border: 1px solid rgba(255,255,255,.06);
       border-radius: 10px; padding: 14px 18px;
@@ -347,7 +387,6 @@
       display: flex; gap: 20px; flex-wrap: wrap;
     }
     .timer-start-info span { color: var(--green); font-weight: 600; }
-
 
     .timer-btn-row { display: flex; gap: 10px; }
 
@@ -386,11 +425,162 @@
     }
     .ring-msg.show { display: block; animation: ringFlash .8s ease-in-out infinite; }
 
+    /* ══ PAGE 4 — 录音记录 ══ */
+    #page4 {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      gap: 24px;
+    }
+    #page4.active { display: flex; }
+
+    .rec4-card { width: 100%; max-width: 780px; }
+
+    /* 主状态显示 */
+    .rec4-status {
+      text-align: center; padding: 36px 20px 28px;
+      background: rgba(0,0,0,.3); border: 1px solid var(--border);
+      border-radius: 14px; margin-bottom: 18px;
+    }
+    .rec4-status.recording { border-color: var(--err); animation: recPulse 1.4s ease-in-out infinite; }
+    .rec4-status.stopped   { border-color: rgba(0,255,150,.4); }
+    @keyframes recPulse {
+      0%,100% { box-shadow: none; }
+      50%      { box-shadow: 0 0 28px rgba(255,77,109,.25); }
+    }
+    .rec4-elapsed {
+      font-size: clamp(52px, 11vw, 96px); font-weight: 700;
+      color: var(--green); letter-spacing: 6px;
+      text-shadow: 0 0 20px var(--green-dim);
+      transition: color .3s;
+    }
+    .rec4-status.recording .rec4-elapsed { color: var(--err); text-shadow: 0 0 20px rgba(255,77,109,.6); }
+    .rec4-elapsed-unit { font-size: 11px; letter-spacing: 4px; color: var(--dim); margin-top: 6px; }
+    .rec4-state-label {
+      font-size: 12px; letter-spacing: 3px; color: var(--dim);
+      margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .rec4-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--dim);
+    }
+    .rec4-status.recording .rec4-dot {
+      background: var(--err); box-shadow: 0 0 8px var(--err);
+      animation: pulse 1s ease-in-out infinite;
+    }
+
+    /* 间隔设置行 */
+    .rec4-interval-row {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .rec4-interval-label { font-size: 11px; letter-spacing: 2px; color: var(--dim); white-space: nowrap; }
+    .rec4-interval-inp {
+      width: 72px; text-align: center;
+      background: rgba(0,0,0,.4); border: 1px solid rgba(0,255,150,.18);
+      border-radius: 8px; padding: 9px 6px;
+      color: var(--text); font-family: inherit; font-size: 15px;
+      outline: none; transition: border-color .2s;
+    }
+    .rec4-interval-inp:focus { border-color: rgba(0,255,150,.5); }
+    .rec4-interval-inp:disabled { opacity: .4; cursor: not-allowed; }
+    .rec4-interval-unit-sel {
+      background: rgba(0,0,0,.4); border: 1px solid rgba(0,255,150,.18);
+      border-radius: 8px; padding: 9px 28px 9px 10px;
+      color: var(--text); font-family: inherit; font-size: 13px;
+      outline: none; cursor: pointer; transition: border-color .2s;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2300ff96' opacity='.5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center;
+    }
+    .rec4-interval-unit-sel:focus { border-color: rgba(0,255,150,.5); }
+    .rec4-interval-unit-sel:disabled { opacity: .4; cursor: not-allowed; }
+    .rec4-interval-hint { font-size: 11px; color: rgba(255,255,255,.2); letter-spacing: 1px; }
+
+    /* 操作按钮 */
+    .rec4-btn-row { display: flex; gap: 10px; }
+    .rec4-start-btn {
+      flex: 1; padding: 16px;
+      border-radius: 10px; border: 1px solid rgba(255,77,109,.4);
+      background: rgba(255,77,109,.06); color: var(--err);
+      font-family: inherit; font-size: 13px; letter-spacing: 2px;
+      cursor: pointer; transition: all .25s;
+    }
+    .rec4-start-btn:hover { background: rgba(255,77,109,.12); box-shadow: 0 0 18px rgba(255,77,109,.1); }
+    .rec4-start-btn.idle {
+      border-color: rgba(0,255,150,.3); color: var(--green);
+      background: var(--green-faint);
+    }
+    .rec4-start-btn.idle:hover { background: rgba(0,255,150,.14); box-shadow: 0 0 18px rgba(0,255,150,.1); }
+    .rec4-mark-btn {
+      padding: 16px 22px;
+      border-radius: 10px; border: 1px solid rgba(255,171,64,.3);
+      background: rgba(255,171,64,.06); color: var(--warn);
+      font-family: inherit; font-size: 12px; letter-spacing: 2px;
+      cursor: pointer; transition: all .2s;
+    }
+    .rec4-mark-btn:hover { background: rgba(255,171,64,.12); }
+    .rec4-mark-btn:disabled { opacity: .3; cursor: not-allowed; }
+
+    /* 标记列表 */
+    .rec4-marks-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .rec4-marks-title { font-size: 11px; letter-spacing: 3px; color: var(--green-dim); }
+    .rec4-marks-count {
+      font-size: 11px; letter-spacing: 2px; color: var(--dim);
+      background: rgba(0,255,150,.06); border: 1px solid rgba(0,255,150,.15);
+      border-radius: 20px; padding: 3px 12px;
+    }
+    .rec4-marks-list {
+      display: flex; flex-direction: column; gap: 8px;
+      max-height: 220px; overflow-y: auto;
+      padding-right: 4px;
+    }
+    .rec4-marks-list::-webkit-scrollbar { width: 4px; }
+    .rec4-marks-list::-webkit-scrollbar-track { background: transparent; }
+    .rec4-marks-list::-webkit-scrollbar-thumb { background: rgba(0,255,150,.2); border-radius: 2px; }
+    .rec4-mark-item {
+      display: flex; align-items: center; gap: 14px;
+      background: rgba(0,0,0,.25); border: 1px solid rgba(255,255,255,.06);
+      border-radius: 8px; padding: 10px 14px;
+      font-size: 13px;
+    }
+    .rec4-mark-item.auto { border-left: 2px solid rgba(255,171,64,.4); }
+    .rec4-mark-item.manual { border-left: 2px solid rgba(0,255,150,.4); }
+    .rec4-mark-idx { color: var(--dim); font-size: 11px; letter-spacing: 1px; min-width: 28px; }
+    .rec4-mark-elapsed { color: var(--green); font-weight: 600; letter-spacing: 1px; min-width: 72px; }
+    .rec4-mark-abs { color: var(--dim); font-size: 12px; }
+    .rec4-mark-type { font-size: 10px; letter-spacing: 1px; margin-left: auto;
+      padding: 2px 8px; border-radius: 10px; }
+    .rec4-mark-item.auto  .rec4-mark-type { color: var(--warn); background: rgba(255,171,64,.08); }
+    .rec4-mark-item.manual .rec4-mark-type { color: var(--green); background: rgba(0,255,150,.08); }
+    .rec4-empty { text-align: center; padding: 24px; font-size: 12px; color: rgba(255,255,255,.15); letter-spacing: 2px; }
+
+    /* 汇总 */
+    .rec4-summary {
+      background: rgba(0,0,0,.3); border: 1px solid rgba(0,255,150,.2);
+      border-radius: 12px; padding: 20px 24px;
+      display: none;
+    }
+    .rec4-summary.show { display: block; }
+    .rec4-summary-title { font-size: 11px; letter-spacing: 3px; color: var(--green-dim); margin-bottom: 16px; }
+    .rec4-summary-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px;
+    }
+    .rec4-sum-item { display: flex; flex-direction: column; gap: 4px; }
+    .rec4-sum-label { font-size: 10px; letter-spacing: 2px; color: var(--dim); }
+    .rec4-sum-val { font-size: 17px; color: var(--green); letter-spacing: 1px; font-weight: 600; }
+    .rec4-sum-val.big { font-size: 26px; }
+
     @media (max-width: 600px) {
       .card { padding: 20px; }
       .rec-slots, .rate-grid, .result-grid { grid-template-columns: 1fr; }
       .result-box { grid-column: 1; }
       .meta { gap: 16px; }
+      .rec4-summary-grid { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
@@ -398,9 +588,10 @@
 
 <!-- 导航 -->
 <nav class="tab-nav">
-  <button class="tab-btn active" onclick="showPage(1, this)">⏱  TIMESTAMP</button>
-  <button class="tab-btn" onclick="showPage(2, this)">📊  TOOLS</button>
-  <button class="tab-btn" onclick="showPage(3, this)">🔔  REMINDER</button>
+  <button class="tab-btn active" onclick="showPage(1, this)">⏱  时间戳</button>
+  <button class="tab-btn" onclick="showPage(2, this)">📊  计算时间隔</button>
+  <button class="tab-btn" onclick="showPage(3, this)">🔔  计时器</button>
+  <button class="tab-btn" onclick="showPage(4, this)">🎙  录音记录</button>
 </nav>
 
 <!-- ══════════════ PAGE 1 ══════════════ -->
@@ -564,61 +755,106 @@
 <!-- ══════════════ PAGE 3 ══════════════ -->
 <div id="page3" class="page">
 
-  <!-- 1小时计时提醒 -->
-  <div class="card" style="max-width:780px;width:100%">
-    <div class="timer-header">
-      <div class="section-title" style="margin:0;border:none;padding:0">⏰  1 小时计时提醒</div>
-      <div class="timer-duration-badge">60 MIN</div>
-    </div>
-    <div class="timer-block" style="margin-top:20px">
-
-      <div class="countdown-display" id="cd1-display">
-        <div class="countdown-num" id="cd1-num">60:00</div>
-        <div class="countdown-unit">剩余时间</div>
-        <div class="countdown-sub" id="cd1-sub">尚未开始</div>
-      </div>
-
-      <div class="ring-msg" id="cd1-ring">🔔 时间到！1小时已到达</div>
-
-      <div class="timer-start-info" id="cd1-info" style="display:none">
-        <div style="margin-right: 32px;">开始时间：<span id="cd1-startHuman">—</span></div>
-        <div>到期时间：<span id="cd1-endHuman">—</span></div>
-      </div>
-
-
-      <div class="timer-btn-row">
-        <button class="timer-start-btn" id="cd1-btn" onclick="timerAction(1)">开始计时</button>
-        <button class="timer-reset-btn" onclick="timerReset(1)">重置</button>
-      </div>
+  <div class="timer-top-row">
+    <div class="section-title" style="margin:0;border:none;padding:0">🔔  自定义倒计时</div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="timer-count-label" id="timer-count-lbl">0 / 5</span>
+      <button class="add-timer-btn" id="add-timer-btn" onclick="addTimer()">＋ 添加计时器</button>
     </div>
   </div>
 
-  <!-- 10分钟计时提醒 -->
-  <div class="card" style="max-width:780px;width:100%">
-    <div class="timer-header">
-      <div class="section-title" style="margin:0;border:none;padding:0">⏰  10 分钟计时提醒</div>
-      <div class="timer-duration-badge">10 MIN</div>
+  <div id="timer-list" style="width:100%;max-width:780px;display:flex;flex-direction:column;gap:24px">
+    <!-- 计时器卡片由 JS 动态注入 -->
+  </div>
+
+</div>
+
+<!-- ══════════════ PAGE 4 ══════════════ -->
+<div id="page4" class="page">
+
+  <!-- 主控卡片 -->
+  <div class="card rec4-card">
+    <div class="section-title" style="margin:0 0 20px;border:none;padding:0">🎙  录音时间记录</div>
+
+    <!-- 主状态显示 -->
+    <div class="rec4-status" id="rec4-status">
+      <div class="rec4-elapsed" id="rec4-elapsed">00:00:00</div>
+      <div class="rec4-elapsed-unit">录音时长</div>
+      <div class="rec4-state-label">
+        <span class="rec4-dot" id="rec4-dot"></span>
+        <span id="rec4-state-txt">等待开始</span>
+      </div>
     </div>
-    <div class="timer-block" style="margin-top:20px">
 
-      <div class="countdown-display" id="cd2-display">
-        <div class="countdown-num" id="cd2-num">10:00</div>
-        <div class="countdown-unit">剩余时间</div>
-        <div class="countdown-sub" id="cd2-sub">尚未开始</div>
+    <!-- 开始时间信息（录音开始后显示） -->
+    <div class="timer-start-info" id="rec4-start-info" style="display:none;margin-bottom:18px">
+      <div>开始时间：<span id="rec4-start-human">—</span></div>
+      <div>Unix 时间戳：<span id="rec4-start-unix">—</span></div>
+    </div>
+
+    <!-- 间隔提醒设置 -->
+    <div class="rec4-interval-row">
+      <span class="rec4-interval-label">每隔</span>
+      <input class="rec4-interval-inp" id="rec4-interval" type="number" min="1" max="9999" value="5" aria-label="提醒间隔数值">
+      <select class="rec4-interval-unit-sel" id="rec4-interval-unit" aria-label="时间单位">
+        <option value="1">秒</option>
+        <option value="60" selected>分钟</option>
+        <option value="3600">小时</option>
+      </select>
+      <span class="rec4-interval-hint">自动添加一个标记</span>
+    </div>
+
+    <!-- 操作按钮 -->
+    <div class="rec4-btn-row">
+      <button class="rec4-start-btn idle" id="rec4-start-btn" onclick="rec4Start()">● 开始录音</button>
+      <button class="rec4-mark-btn" id="rec4-mark-btn" onclick="rec4ManualMark()" disabled>＋ 手动标记</button>
+    </div>
+  </div>
+
+  <!-- 标记列表 -->
+  <div class="card rec4-card">
+    <div class="rec4-marks-header">
+      <span class="rec4-marks-title">标记记录</span>
+      <span class="rec4-marks-count" id="rec4-marks-count">0 个标记</span>
+    </div>
+    <div class="rec4-marks-list" id="rec4-marks-list">
+      <div class="rec4-empty" id="rec4-empty">尚无标记 — 开始录音后将自动记录</div>
+    </div>
+  </div>
+
+  <!-- 汇总 -->
+  <div class="card rec4-card">
+    <div class="rec4-summary" id="rec4-summary">
+      <div class="rec4-summary-title">录音汇总</div>
+      <div class="rec4-summary-grid">
+        <div class="rec4-sum-item">
+          <span class="rec4-sum-label">开始时间</span>
+          <span class="rec4-sum-val" id="sum-start">—</span>
+        </div>
+        <div class="rec4-sum-item">
+          <span class="rec4-sum-label">结束时间</span>
+          <span class="rec4-sum-val" id="sum-end">—</span>
+        </div>
+        <div class="rec4-sum-item">
+          <span class="rec4-sum-label">录音时长</span>
+          <span class="rec4-sum-val" id="sum-duration">—</span>
+        </div>
+        <div class="rec4-sum-item">
+          <span class="rec4-sum-label">总标记数</span>
+          <span class="rec4-sum-val big" id="sum-marks">—</span>
+        </div>
+        <div class="rec4-sum-item">
+          <span class="rec4-sum-label">自动标记</span>
+          <span class="rec4-sum-val" id="sum-auto">—</span>
+        </div>
+        <div class="rec4-sum-item">
+          <span class="rec4-sum-label">手动标记</span>
+          <span class="rec4-sum-val" id="sum-manual">—</span>
+        </div>
       </div>
-
-      <div class="ring-msg" id="cd2-ring">🔔 时间到！10分钟已到达</div>
-
-<!--<div style="margin-right: 32px;"：这个内联样式给"开始时间"的 <div> 添加了右边距 32 像素> -->
-      <div class="timer-start-info" id="cd2-info" style="display:none">
-        <div style="margin-right: 32px;">开始时间：<span id="cd2-startHuman">—</span></div>
-        <div>到期时间：<span id="cd2-endHuman">—</span></div>
-      </div>
-
-      <div class="timer-btn-row">
-        <button class="timer-start-btn" id="cd2-btn" onclick="timerAction(2)">开始计时</button>
-        <button class="timer-reset-btn" onclick="timerReset(2)">重置</button>
-      </div>
+    </div>
+    <div style="text-align:center;margin-top:12px">
+      <button class="timer-reset-btn" onclick="rec4Reset()" style="width:100%;padding:13px;letter-spacing:2px">重置 / 新录音</button>
     </div>
   </div>
 
@@ -860,19 +1096,24 @@ function calcRate() {
   document.getElementById('r-size').textContent = sd;
 }
 
-// ── 计时提醒 ──────────────────────────────────────────────────
-// 配置：1=1小时，2=10分钟
-const TIMER_CFG = {
-  1: { total: 60 * 60 },   // 秒
-  2: { total: 10 * 60 }
-};
+// ── 自定义倒计时 ──────────────────────────────────────────────
+const MAX_TIMERS = 5;
+let timerNextId = 1;
+const timers = {}; // id -> state
 
-const timerState = {
-  1: { running: false, startMs: null, endMs: null, ivId: null, done: false },
-  2: { running: false, startMs: null, endMs: null, ivId: null, done: false }
-};
+function fmtCountdown(remainSec) {
+  const h = Math.floor(remainSec / 3600);
+  const m = Math.floor((remainSec % 3600) / 60);
+  const s = Math.floor(remainSec % 60);
+  return h > 0 ? `${pad(h)}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
+}
 
-// Web Audio API 生成提示音
+function humanTime(ms) {
+  const d = new Date(ms);
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ` +
+         `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+
 function playAlert() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -891,41 +1132,102 @@ function playAlert() {
   } catch(e) {}
 }
 
-function fmtCountdown(remainSec) {
-  const m = Math.floor(remainSec / 60);
-  const s = Math.floor(remainSec % 60);
-  return `${pad(m)}:${pad(s)}`;
+function addTimer() {
+  const count = Object.keys(timers).length;
+  if (count >= MAX_TIMERS) return;
+  const id = timerNextId++;
+  timers[id] = { totalSec: 0, running: false, startMs: null, endMs: null, ivId: null, done: false };
+
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.id = `timer-card-${id}`;
+  card.style.width = '100%';
+
+  card.innerHTML = `
+    <div class="timer-header">
+      <input class="timer-name-inp" id="tname-${id}" placeholder="计时器名称（可选）" maxlength="20" aria-label="计时器名称">
+      <button class="timer-del-btn" id="tdel-${id}" onclick="removeTimer(${id})">删除</button>
+    </div>
+    <div class="timer-block" style="margin-top:16px">
+      <div class="duration-row">
+        <span class="duration-label">设定时长</span>
+        <input class="duration-inp" id="th-${id}" type="number" min="0" max="23" value="0" aria-label="小时">
+        <span class="duration-unit">时</span>
+        <span class="duration-sep">:</span>
+        <input class="duration-inp" id="tm-${id}" type="number" min="0" max="59" value="25" aria-label="分钟">
+        <span class="duration-unit">分</span>
+        <span class="duration-sep">:</span>
+        <input class="duration-inp" id="ts-${id}" type="number" min="0" max="59" value="0" aria-label="秒">
+        <span class="duration-unit">秒</span>
+      </div>
+      <div class="countdown-display" id="cd-display-${id}">
+        <div class="countdown-num" id="cd-num-${id}">—:——</div>
+        <div class="countdown-unit">剩余时间</div>
+        <div class="countdown-sub" id="cd-sub-${id}">尚未开始</div>
+      </div>
+      <div class="ring-msg" id="cd-ring-${id}">🔔 时间到！</div>
+      <div class="timer-start-info" id="cd-info-${id}" style="display:none">
+        <div style="margin-right:32px">开始时间：<span id="cd-start-${id}">—</span></div>
+        <div>到期时间：<span id="cd-end-${id}">—</span></div>
+      </div>
+      <div class="timer-btn-row">
+        <button class="timer-start-btn" id="cd-btn-${id}" onclick="timerAction(${id})">开始计时</button>
+        <button class="timer-reset-btn" onclick="timerReset(${id})">重置</button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('timer-list').appendChild(card);
+  updateTimerCountUI();
 }
 
-function humanTime(ms) {
-  const d = new Date(ms);
-  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ` +
-         `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+function removeTimer(id) {
+  const st = timers[id];
+  if (st && st.running) return;
+  if (st && st.ivId) clearInterval(st.ivId);
+  delete timers[id];
+  const card = document.getElementById(`timer-card-${id}`);
+  if (card) card.remove();
+  updateTimerCountUI();
+}
+
+function updateTimerCountUI() {
+  const count = Object.keys(timers).length;
+  const lbl = document.getElementById('timer-count-lbl');
+  const addBtn = document.getElementById('add-timer-btn');
+  if (lbl) lbl.textContent = `${count} / ${MAX_TIMERS}`;
+  if (addBtn) addBtn.disabled = count >= MAX_TIMERS;
+}
+
+function getTimerTotalSec(id) {
+  const h = Math.max(0, parseInt(document.getElementById(`th-${id}`).value) || 0);
+  const m = Math.max(0, parseInt(document.getElementById(`tm-${id}`).value) || 0);
+  const s = Math.max(0, parseInt(document.getElementById(`ts-${id}`).value) || 0);
+  return h * 3600 + m * 60 + s;
 }
 
 function timerTick(id) {
-  const st  = timerState[id];
-  const now = Date.now();
-  const remain = Math.max(0, (st.endMs - now) / 1000);
+  const st = timers[id];
+  const remain = Math.max(0, (st.endMs - Date.now()) / 1000);
 
-  document.getElementById(`cd${id}-num`).textContent = fmtCountdown(remain);
-
-  const pct = Math.round((1 - remain / TIMER_CFG[id].total) * 100);
-  document.getElementById(`cd${id}-sub`).textContent = `已用 ${pct}%`;
+  document.getElementById(`cd-num-${id}`).textContent = fmtCountdown(remain);
+  const pct = st.totalSec > 0 ? Math.round((1 - remain / st.totalSec) * 100) : 0;
+  document.getElementById(`cd-sub-${id}`).textContent = `已用 ${pct}%`;
 
   if (remain <= 0 && !st.done) {
     st.done = true;
     clearInterval(st.ivId);
     st.running = false;
-    // 更新 UI
-    document.getElementById(`cd${id}-num`).textContent = '00:00';
-    document.getElementById(`cd${id}-sub`).textContent = '已完成！';
-    document.getElementById(`cd${id}-display`).classList.add('ringing');
-    document.getElementById(`cd${id}-ring`).classList.add('show');
-    const btn = document.getElementById(`cd${id}-btn`);
+    document.getElementById(`cd-num-${id}`).textContent = fmtCountdown(0);
+    document.getElementById(`cd-sub-${id}`).textContent = '已完成！';
+    document.getElementById(`cd-display-${id}`).classList.add('ringing');
+    const label = document.getElementById(`tname-${id}`).value.trim() || '计时';
+    document.getElementById(`cd-ring-${id}`).textContent = `🔔 时间到！${label}已到达`;
+    document.getElementById(`cd-ring-${id}`).classList.add('show');
+    const btn = document.getElementById(`cd-btn-${id}`);
     btn.textContent = '已到时 — 重新开始';
     btn.classList.remove('running'); btn.classList.add('done');
-    // 播放提示音（重复 3 次）
+    document.getElementById(`tdel-${id}`).disabled = false;
     playAlert();
     setTimeout(playAlert, 1500);
     setTimeout(playAlert, 3000);
@@ -933,49 +1235,10 @@ function timerTick(id) {
 }
 
 function timerAction(id) {
-  const st  = timerState[id];
-  const btn = document.getElementById(`cd${id}-btn`);
-
-  if (!st.running) {
-    // 开始（或重新开始）
-    timerReset(id);
-    st.running  = true;
-    st.done     = false;
-    st.startMs  = Date.now();
-    st.endMs    = st.startMs + TIMER_CFG[id].total * 1000;
-
-    // 显示时间信息
-    document.getElementById(`cd${id}-info`).style.display = 'flex';
-    document.getElementById(`cd${id}-startHuman`).textContent = humanTime(st.startMs);
-    document.getElementById(`cd${id}-endHuman`).textContent   = humanTime(st.endMs);
-
-    btn.textContent = '计时中 — 点击暂停';
-    btn.classList.add('running'); btn.classList.remove('done');
-
-    timerTick(id);
-    st.ivId = setInterval(() => timerTick(id), 500);
-  } else {
-    // 暂停
-    clearInterval(st.ivId);
-    st.running = false;
-    btn.textContent = '继续计时';
-    btn.classList.remove('running');
-    // 保存剩余时间作为新终点
-    const remain = Math.max(0, st.endMs - Date.now());
-    // 重置 endMs 为当前的剩余（暂停后继续时从此续算）
-    st._pausedRemainMs = remain;
-  }
-}
-
-// 处理暂停后继续（覆写 timerAction 中"继续"分支）
-const _origAction = timerAction;
-// 用闭包实现：当 running=false 且 _pausedRemainMs 存在时，继续倒计时
-function timerAction(id) {
-  const st  = timerState[id];
-  const btn = document.getElementById(`cd${id}-btn`);
+  const st  = timers[id];
+  const btn = document.getElementById(`cd-btn-${id}`);
 
   if (st.done) {
-    // 已到时，重置后重新开始
     timerReset(id);
     timerAction(id);
     return;
@@ -984,8 +1247,8 @@ function timerAction(id) {
   if (!st.running) {
     if (st._pausedRemainMs !== undefined) {
       // 从暂停恢复
-      st.running  = true;
-      st.endMs    = Date.now() + st._pausedRemainMs;
+      st.running = true;
+      st.endMs   = Date.now() + st._pausedRemainMs;
       delete st._pausedRemainMs;
       btn.textContent = '计时中 — 点击暂停';
       btn.classList.add('running');
@@ -993,13 +1256,18 @@ function timerAction(id) {
       st.ivId = setInterval(() => timerTick(id), 500);
     } else {
       // 全新开始
+      const total = getTimerTotalSec(id);
+      if (total <= 0) return;
+      st.totalSec = total;
       st.running  = true;
       st.done     = false;
       st.startMs  = Date.now();
-      st.endMs    = st.startMs + TIMER_CFG[id].total * 1000;
-      document.getElementById(`cd${id}-info`).style.display = 'flex';
-      document.getElementById(`cd${id}-startHuman`).textContent = humanTime(st.startMs);
-      document.getElementById(`cd${id}-endHuman`).textContent   = humanTime(st.endMs);
+      st.endMs    = st.startMs + total * 1000;
+      ['th','tm','ts'].forEach(p => { document.getElementById(`${p}-${id}`).disabled = true; });
+      document.getElementById(`tdel-${id}`).disabled = true;
+      document.getElementById(`cd-info-${id}`).style.display = 'flex';
+      document.getElementById(`cd-start-${id}`).textContent = humanTime(st.startMs);
+      document.getElementById(`cd-end-${id}`).textContent   = humanTime(st.endMs);
       btn.textContent = '计时中 — 点击暂停';
       btn.classList.add('running'); btn.classList.remove('done');
       timerTick(id);
@@ -1016,20 +1284,211 @@ function timerAction(id) {
 }
 
 function timerReset(id) {
-  const st = timerState[id];
+  const st = timers[id];
+  if (!st) return;
   clearInterval(st.ivId);
-  Object.assign(st, { running: false, startMs: null, endMs: null, ivId: null, done: false });
+  Object.assign(st, { totalSec: 0, running: false, startMs: null, endMs: null, ivId: null, done: false });
   delete st._pausedRemainMs;
-
-  const defaults = { 1: '60:00', 2: '10:00' };
-  document.getElementById(`cd${id}-num`).textContent = defaults[id];
-  document.getElementById(`cd${id}-sub`).textContent = '尚未开始';
-  document.getElementById(`cd${id}-display`).classList.remove('ringing');
-  document.getElementById(`cd${id}-ring`).classList.remove('show');
-  document.getElementById(`cd${id}-info`).style.display = 'none';
-  const btn = document.getElementById(`cd${id}-btn`);
+  ['th','tm','ts'].forEach(p => { document.getElementById(`${p}-${id}`).disabled = false; });
+  document.getElementById(`tdel-${id}`).disabled = false;
+  document.getElementById(`cd-num-${id}`).textContent = '—:——';
+  document.getElementById(`cd-sub-${id}`).textContent = '尚未开始';
+  document.getElementById(`cd-display-${id}`).classList.remove('ringing');
+  document.getElementById(`cd-ring-${id}`).classList.remove('show');
+  document.getElementById(`cd-info-${id}`).style.display = 'none';
+  const btn = document.getElementById(`cd-btn-${id}`);
   btn.textContent = '开始计时';
   btn.classList.remove('running', 'done');
+}
+
+// 初始化：默认一个 25 分钟计时器
+addTimer();
+
+// ── 录音时间记录 ──────────────────────────────────────────────
+const rec4 = {
+  running: false,
+  startMs: null,
+  endMs: null,
+  elapsedIv: null,
+  intervalIv: null,
+  marks: [],          // { ms, elapsed, type: 'auto'|'manual' }
+  nextAutoMs: null,   // 下次自动标记的绝对时间
+};
+
+function rec4Fmt(totalSec) {
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = Math.floor(totalSec % 60);
+  return `${pad(h)}:${pad(m)}:${pad(s)}`;
+}
+
+function rec4AbsTime(ms) {
+  const d = new Date(ms);
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+
+function rec4AbsFull(ms) {
+  const d = new Date(ms);
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ` +
+         `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+
+function rec4AddMark(type) {
+  const now = Date.now();
+  const elapsed = (now - rec4.startMs) / 1000;
+  rec4.marks.push({ ms: now, elapsed, type });
+  rec4RenderMarks();
+  if (type === 'auto') {
+    playAlert();
+    setTimeout(playAlert, 1000);
+  }
+}
+
+function rec4RenderMarks() {
+  const list = document.getElementById('rec4-marks-list');
+  const empty = document.getElementById('rec4-empty');
+  const countEl = document.getElementById('rec4-marks-count');
+
+  countEl.textContent = `${rec4.marks.length} 个标记`;
+
+  if (rec4.marks.length === 0) {
+    empty.style.display = 'block';
+    // 移除所有 mark-item
+    list.querySelectorAll('.rec4-mark-item').forEach(el => el.remove());
+    return;
+  }
+  empty.style.display = 'none';
+
+  // 重建列表
+  list.querySelectorAll('.rec4-mark-item').forEach(el => el.remove());
+  rec4.marks.forEach((m, i) => {
+    const div = document.createElement('div');
+    div.className = `rec4-mark-item ${m.type}`;
+    div.innerHTML = `
+      <span class="rec4-mark-idx">#${i + 1}</span>
+      <span class="rec4-mark-elapsed">${Math.floor(m.elapsed)}s</span>
+      <span class="rec4-mark-abs">${rec4AbsTime(m.ms)}</span>
+      <span class="rec4-mark-type">${m.type === 'auto' ? '自动' : '手动'}</span>
+    `;
+    list.appendChild(div);
+  });
+  // 滚动到底部
+  list.scrollTop = list.scrollHeight;
+}
+
+function rec4Tick() {
+  if (!rec4.running) return;
+  const elapsed = (Date.now() - rec4.startMs) / 1000;
+  document.getElementById('rec4-elapsed').textContent = rec4Fmt(elapsed);
+
+  // 检查是否到达下一个自动标记时间
+  if (rec4.nextAutoMs && Date.now() >= rec4.nextAutoMs) {
+    rec4AddMark('auto');
+    // 计算下一次
+    const intervalMs = (parseInt(document.getElementById('rec4-interval').value) || 5)
+                     * (parseInt(document.getElementById('rec4-interval-unit').value) || 60) * 1000;
+    rec4.nextAutoMs += intervalMs;
+  }
+}
+
+function rec4Start() {
+  if (rec4.running) {
+    // 结束录音
+    rec4.running = false;
+    rec4.endMs = Date.now();
+    clearInterval(rec4.elapsedIv);
+
+    const statusEl = document.getElementById('rec4-status');
+    statusEl.classList.remove('recording');
+    statusEl.classList.add('stopped');
+    document.getElementById('rec4-state-txt').textContent = '录音已结束';
+    document.getElementById('rec4-elapsed').textContent = rec4Fmt((rec4.endMs - rec4.startMs) / 1000);
+
+    const btn = document.getElementById('rec4-start-btn');
+    btn.textContent = '● 开始录音';
+    btn.classList.add('idle');
+    document.getElementById('rec4-mark-btn').disabled = true;
+    document.getElementById('rec4-interval').disabled = false;
+    document.getElementById('rec4-interval-unit').disabled = false;
+
+    rec4ShowSummary();
+  } else {
+    // 开始录音
+    rec4.running = true;
+    rec4.startMs = Date.now();
+    rec4.endMs = null;
+    rec4.marks = [];
+    rec4RenderMarks();
+
+    const intervalVal  = parseInt(document.getElementById('rec4-interval').value) || 5;
+    const unitSec      = parseInt(document.getElementById('rec4-interval-unit').value) || 60;
+    const intervalMs   = intervalVal * unitSec * 1000;
+    rec4.nextAutoMs = rec4.startMs + intervalMs;
+
+    document.getElementById('rec4-interval').disabled = true;
+    document.getElementById('rec4-interval-unit').disabled = true;
+
+    // 显示开始时间与 Unix 时间戳
+    document.getElementById('rec4-start-info').style.display = 'flex';
+    document.getElementById('rec4-start-human').textContent = rec4AbsFull(rec4.startMs);
+    document.getElementById('rec4-start-unix').textContent  = Math.floor(rec4.startMs / 1000);
+
+    const statusEl = document.getElementById('rec4-status');
+    statusEl.classList.remove('stopped');
+    statusEl.classList.add('recording');
+    document.getElementById('rec4-state-txt').textContent = '录音中';
+
+    const btn = document.getElementById('rec4-start-btn');
+    btn.textContent = '■ 结束录音';
+    btn.classList.remove('idle');
+    document.getElementById('rec4-mark-btn').disabled = false;
+
+    document.getElementById('rec4-summary').classList.remove('show');
+
+    rec4.elapsedIv = setInterval(rec4Tick, 500);
+  }
+}
+
+function rec4ManualMark() {
+  if (!rec4.running) return;
+  rec4AddMark('manual');
+}
+
+function rec4ShowSummary() {
+  const duration = (rec4.endMs - rec4.startMs) / 1000;
+  const autoCount   = rec4.marks.filter(m => m.type === 'auto').length;
+  const manualCount = rec4.marks.filter(m => m.type === 'manual').length;
+
+  document.getElementById('sum-start').textContent    = rec4AbsFull(rec4.startMs);
+  document.getElementById('sum-end').textContent      = rec4AbsFull(rec4.endMs);
+  document.getElementById('sum-duration').textContent = rec4Fmt(duration);
+  document.getElementById('sum-marks').textContent    = rec4.marks.length + ' 次';
+  document.getElementById('sum-auto').textContent     = autoCount + ' 次';
+  document.getElementById('sum-manual').textContent   = manualCount + ' 次';
+  document.getElementById('rec4-summary').classList.add('show');
+}
+
+function rec4Reset() {
+  if (rec4.running) {
+    clearInterval(rec4.elapsedIv);
+    rec4.running = false;
+  }
+  Object.assign(rec4, { running: false, startMs: null, endMs: null, elapsedIv: null, marks: [], nextAutoMs: null });
+
+  const statusEl = document.getElementById('rec4-status');
+  statusEl.classList.remove('recording', 'stopped');
+  document.getElementById('rec4-elapsed').textContent = '00:00:00';
+  document.getElementById('rec4-state-txt').textContent = '等待开始';
+
+  const btn = document.getElementById('rec4-start-btn');
+  btn.textContent = '● 开始录音';
+  btn.classList.add('idle');
+  document.getElementById('rec4-mark-btn').disabled = true;
+  document.getElementById('rec4-interval').disabled = false;
+  document.getElementById('rec4-interval-unit').disabled = false;
+  document.getElementById('rec4-summary').classList.remove('show');
+  document.getElementById('rec4-start-info').style.display = 'none';
+  rec4RenderMarks();
 }
 </script>
 </body>
