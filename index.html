@@ -13,6 +13,7 @@
   <button class="tab-btn" onclick="showPage(2, this)">📊  计算时间隔</button>
   <button class="tab-btn" onclick="showPage(3, this)">🔔  计时器</button>
   <button class="tab-btn" onclick="showPage(4, this)">🎙  录音记录</button>
+  <button class="tab-btn" onclick="showPage(5, this)">🏷️  动作标记</button>
 </nav>
 
 <!-- PAGE 1 -->
@@ -229,6 +230,67 @@
       <button class="timer-reset-btn" onclick="rec4Reset()" style="width:100%;padding:13px;letter-spacing:2px">重置 / 新录音</button>
     </div>
   </div>
+</div>
+
+<!-- PAGE 5 -->
+<div id="page5" class="page">
+
+  <div class="card mark5-card">
+    <div class="section-title mark5-title-row">
+      <span>🏷️  动作标记</span>
+      <span class="mark5-sync-badge" id="mark5-sync-badge">⟳ 加载中</span>
+    </div>
+
+    <!-- 主控制行：下拉选择 + 自定义输入 + 标记按钮 -->
+    <div class="mark5-main-row">
+      <div class="mark5-select-wrap">
+        <div class="mark5-field-label">选择动作</div>
+        <select class="inp mark5-sel" id="mark5-sel" onchange="mark5OnChange()"></select>
+      </div>
+      <div class="mark5-custom-wrap" id="mark5-custom-wrap">
+        <div class="mark5-field-label">自定义名称</div>
+        <div class="mark5-custom-inp-row">
+          <input class="inp" id="mark5-custom-inp" type="text" placeholder="输入动作名称" maxlength="20">
+          <button class="fill-now mark5-save-preset-btn" onclick="mark5SaveAsPreset()">保存预设</button>
+        </div>
+      </div>
+      <button class="mark5-do-btn" id="mark5-do-btn" onclick="mark5DoMark()">＋ 标记</button>
+    </div>
+
+    <!-- 快捷标记按钮区 -->
+    <div class="mark5-quick-label">快速标记（点击立即记录）</div>
+    <div class="mark5-quick-row" id="mark5-quick-row"></div>
+
+    <!-- 预设动作管理（可折叠） -->
+    <div class="mark5-preset-section">
+      <div class="mark5-preset-header" onclick="mark5TogglePresets()">
+        <span class="mark5-preset-toggle-title">管理预设动作</span>
+        <span class="mark5-preset-toggle-icon" id="mark5-preset-icon">▼</span>
+      </div>
+      <div class="mark5-preset-body" id="mark5-preset-body">
+        <div class="mark5-preset-add-row">
+          <input class="inp" id="mark5-new-preset-inp" type="text" placeholder="输入新预设名称" maxlength="20">
+          <button class="conv-btn" onclick="mark5AddPreset()">添加预设</button>
+        </div>
+        <div class="mark5-preset-tags" id="mark5-preset-tags"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mark5-card">
+    <div class="mark5-records-header">
+      <span class="mark5-records-title">标记记录</span>
+      <span class="mark5-records-count" id="mark5-count">0 个标记</span>
+      <button class="hist-clear-btn" onclick="mark5Clear()">清空</button>
+    </div>
+    <div class="mark5-records-list" id="mark5-records-list">
+      <div class="mark5-empty" id="mark5-empty">尚无标记 — 选择动作后点击标记</div>
+    </div>
+    <div style="text-align:center;margin-top:16px">
+      <button class="conv-btn" id="mark5-copy-btn" onclick="mark5CopyAll()">复制全部记录</button>
+    </div>
+  </div>
+
 </div>
 
 <script src="js/app.js"></script>

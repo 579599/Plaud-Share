@@ -503,6 +503,240 @@ function rec4ShowSummary() {
   document.getElementById('rec4-summary').classList.add('show');
 }
 
+// ── PAGE 5：动作标记 ──────────────────────────────────────────
+const mark5Presets = [];
+const mark5Marks = [];
+let mark5PresetsOpen = false;
+
+function mark5SetBadge(state) {
+  const b = document.getElementById('mark5-sync-badge');
+  if (!b) return;
+  const map = {
+    loading: ['⟳ 加载中',  ''],
+    ok:      ['● 已同步',   'ok'],
+    local:   ['○ 本地模式', 'err'],
+    saving:  ['⟳ 保存中',  ''],
+  };
+  const [text, cls] = map[state] || map.loading;
+  b.textContent = text;
+  b.className = 'mark5-sync-badge' + (cls ? ' ' + cls : '');
+}
+
+async function mark5LoadPresets() {
+  mark5SetBadge('loading');
+  try {
+    const res = await fetch('/api/presets');
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    if (!Array.isArray(data)) throw new Error();
+    mark5Presets.length = 0;
+    data.forEach(p => mark5Presets.push(p));
+    mark5SetBadge('ok');
+  } catch {
+    if (!mark5Presets.length)
+      ['开始录音','Ble连接','结束录音','Ble断连','WIFI快传','上云','导出日志','绑定']
+        .forEach(p => mark5Presets.push(p));
+    mark5SetBadge('local');
+  }
+  mark5LoadLocalMarks();
+  mark5UpdateSelect();
+  mark5RenderQuick();
+  mark5RenderRecords();
+}
+
+async function mark5SavePresets() {
+  mark5SetBadge('saving');
+  try {
+    const res = await fetch('/api/presets', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify([...mark5Presets])
+    });
+    if (!res.ok) throw new Error();
+    mark5SetBadge('ok');
+  } catch {
+    mark5SetBadge('local');
+  }
+}
+
+function mark5SaveLocalMarks() {
+  try { localStorage.setItem('mark5_marks', JSON.stringify(mark5Marks)); } catch(e) {}
+}
+
+function mark5LoadLocalMarks() {
+  try {
+    const raw = localStorage.getItem('mark5_marks');
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (Array.isArray(data)) {
+      mark5Marks.length = 0;
+      data.forEach(m => { if (m && m.ts && m.action) mark5Marks.push(m); });
+    }
+  } catch(e) {}
+}
+
+function mark5Init() { mark5LoadPresets(); }
+
+function mark5OnChange() {
+  const val = document.getElementById('mark5-sel').value;
+  document.getElementById('mark5-custom-wrap').style.display = val === '__custom__' ? 'flex' : 'none';
+}
+
+function mark5GetLabel() {
+  const sel = document.getElementById('mark5-sel');
+  if (sel.value === '__custom__') {
+    return document.getElementById('mark5-custom-inp').value.trim() || '自定义';
+  }
+  return sel.value;
+}
+
+function mark5DoMark(label) {
+  const action = label !== undefined ? label : mark5GetLabel();
+  mark5Marks.push({ ts: Date.now(), action });
+  mark5SaveLocalMarks();
+  mark5RenderRecords();
+  // 按钮闪烁反馈
+  const btn = label !== undefined
+    ? document.querySelector(`.mark5-quick-btn[data-label="${label}"]`)
+    : document.getElementById('mark5-do-btn');
+  if (btn) {
+    btn.classList.add('mark5-flash');
+    setTimeout(() => btn.classList.remove('mark5-flash'), 350);
+  }
+}
+
+function mark5RenderQuick() {
+  const row = document.getElementById('mark5-quick-row');
+  row.innerHTML = '';
+  mark5Presets.forEach(p => {
+    const btn = document.createElement('button');
+    btn.className = 'mark5-quick-btn';
+    btn.dataset.label = p;
+    btn.textContent = p;
+    btn.onclick = () => mark5DoMark(p);
+    row.appendChild(btn);
+  });
+}
+
+function mark5UpdateSelect() {
+  const sel = document.getElementById('mark5-sel');
+  const cur = sel.value;
+  sel.innerHTML = '';
+  mark5Presets.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p; opt.textContent = p;
+    sel.appendChild(opt);
+  });
+  const customOpt = document.createElement('option');
+  customOpt.value = '__custom__'; customOpt.textContent = '✏️  自定义...';
+  sel.appendChild(customOpt);
+  if (mark5Presets.includes(cur)) sel.value = cur;
+  mark5OnChange();
+}
+
+function mark5RenderPresetTags() {
+  const tags = document.getElementById('mark5-preset-tags');
+  tags.innerHTML = '';
+  mark5Presets.forEach((p, i) => {
+    const tag = document.createElement('div');
+    tag.className = 'mark5-preset-tag';
+    tag.innerHTML = `<span>${p}</span><button class="mark5-tag-del" onclick="mark5RemovePreset(${i})">×</button>`;
+    tags.appendChild(tag);
+  });
+}
+
+function mark5TogglePresets() {
+  mark5PresetsOpen = !mark5PresetsOpen;
+  document.getElementById('mark5-preset-body').style.display = mark5PresetsOpen ? 'block' : 'none';
+  document.getElementById('mark5-preset-icon').textContent = mark5PresetsOpen ? '▲' : '▼';
+  if (mark5PresetsOpen) mark5RenderPresetTags();
+}
+
+function mark5AddPreset() {
+  const inp = document.getElementById('mark5-new-preset-inp');
+  const name = inp.value.trim();
+  if (!name || mark5Presets.includes(name)) return;
+  mark5Presets.push(name);
+  inp.value = '';
+  mark5RenderPresetTags();
+  mark5RenderQuick();
+  mark5UpdateSelect();
+  mark5SavePresets();
+}
+
+function mark5SaveAsPreset() {
+  const name = document.getElementById('mark5-custom-inp').value.trim();
+  if (!name || mark5Presets.includes(name)) return;
+  mark5Presets.push(name);
+  if (mark5PresetsOpen) mark5RenderPresetTags();
+  mark5RenderQuick();
+  mark5UpdateSelect();
+  document.getElementById('mark5-sel').value = name;
+  mark5OnChange();
+  mark5SavePresets();
+}
+
+function mark5RemovePreset(idx) {
+  mark5Presets.splice(idx, 1);
+  mark5RenderPresetTags();
+  mark5RenderQuick();
+  mark5UpdateSelect();
+  mark5SavePresets();
+}
+
+function mark5RenderRecords() {
+  const list = document.getElementById('mark5-records-list');
+  const empty = document.getElementById('mark5-empty');
+  document.getElementById('mark5-count').textContent = `${mark5Marks.length} 个标记`;
+  list.querySelectorAll('.mark5-record-item').forEach(el => el.remove());
+  if (mark5Marks.length === 0) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  mark5Marks.forEach((m, i) => {
+    const d = new Date(m.ts);
+    const timeStr = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    const msStr   = pad(d.getMilliseconds(), 3);
+    const div = document.createElement('div');
+    div.className = 'mark5-record-item';
+    div.innerHTML = `
+      <span class="mark5-rec-idx">#${i + 1}</span>
+      <span class="mark5-rec-action">${m.action}</span>
+      <span class="mark5-rec-time">${timeStr}<span class="mark5-rec-ms">.${msStr}</span></span>
+      <span class="mark5-rec-ts">${Math.floor(m.ts / 1000)}</span>
+      <button class="mark5-rec-del" onclick="mark5DeleteMark(${i})">×</button>`;
+    list.appendChild(div);
+  });
+  list.scrollTop = list.scrollHeight;
+}
+
+function mark5DeleteMark(idx) {
+  mark5Marks.splice(idx, 1);
+  mark5SaveLocalMarks();
+  mark5RenderRecords();
+}
+
+function mark5Clear() {
+  if (!mark5Marks.length) return;
+  mark5Marks.length = 0;
+  mark5SaveLocalMarks();
+  mark5RenderRecords();
+}
+
+function mark5CopyAll() {
+  if (!mark5Marks.length) return;
+  const lines = mark5Marks.map((m, i) => {
+    const d = new Date(m.ts);
+    const t = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}.${pad(d.getMilliseconds(), 3)}`;
+    return `#${i + 1}\t${m.action}\t${t}\t${Math.floor(m.ts / 1000)}`;
+  });
+  const btn = document.getElementById('mark5-copy-btn');
+  navigator.clipboard.writeText(lines.join('\n')).then(() => {
+    btn.textContent = '已复制 ✓'; btn.style.color = 'var(--green)';
+    setTimeout(() => { btn.textContent = '复制全部记录'; btn.style.color = ''; }, 1800);
+  });
+}
+
+mark5Init();
+
 function rec4Reset() {
   if (rec4.running) { clearInterval(rec4.elapsedIv); rec4.running = false; }
   Object.assign(rec4, { running: false, startMs: null, endMs: null, elapsedIv: null, marks: [], nextAutoMs: null });

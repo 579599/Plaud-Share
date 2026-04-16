@@ -575,6 +575,155 @@ select.inp {
 .rec4-sum-val { font-size: 17px; color: var(--green); letter-spacing: 1px; font-weight: 600; }
 .rec4-sum-val.big { font-size: 26px; }
 
+/* ══ PAGE 5 — 动作标记 ══ */
+#page5 {
+  display: none; flex-direction: column; align-items: center;
+  padding: 40px 20px; gap: 24px;
+}
+#page5.active { display: flex; }
+
+.mark5-card { width: 100%; max-width: 780px; }
+
+.mark5-title-row { display: flex; align-items: center; justify-content: space-between; }
+.mark5-sync-badge {
+  font-size: 10px; letter-spacing: 1px;
+  padding: 2px 10px; border-radius: 20px;
+  border: 1px solid rgba(255,255,255,.1); color: var(--dim);
+  transition: all .3s;
+}
+.mark5-sync-badge.ok  { color: var(--green);  border-color: rgba(0,255,150,.35); }
+.mark5-sync-badge.err { color: var(--warn);   border-color: rgba(255,171,64,.35); }
+
+/* 主控制行 */
+.mark5-main-row {
+  display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.mark5-field-label {
+  font-size: 10px; letter-spacing: 2px; color: var(--dim);
+  margin-bottom: 6px;
+}
+
+.mark5-select-wrap {
+  display: flex; flex-direction: column; flex: 1 1 180px; min-width: 120px;
+}
+
+.mark5-custom-wrap {
+  display: none; flex-direction: column; flex: 1 1 200px; min-width: 140px;
+}
+
+.mark5-custom-inp-row {
+  display: flex; gap: 8px; align-items: stretch;
+}
+
+.mark5-save-preset-btn {
+  white-space: nowrap; flex-shrink: 0;
+  padding: 0 12px; height: auto; align-self: stretch;
+}
+
+.mark5-do-btn {
+  padding: 10px 24px; border-radius: 8px;
+  border: 1px solid rgba(0,255,150,.4);
+  background: var(--green-faint); color: var(--green);
+  font-family: inherit; font-size: 13px; letter-spacing: 2px;
+  cursor: pointer; transition: all .2s; white-space: nowrap;
+  align-self: flex-end;
+}
+.mark5-do-btn:hover { background: rgba(0,255,150,.14); box-shadow: 0 0 18px rgba(0,255,150,.12); }
+.mark5-do-btn.mark5-flash { background: rgba(0,255,150,.28); transform: scale(.97); }
+
+/* 快捷标记区 */
+.mark5-quick-label {
+  font-size: 10px; letter-spacing: 2px; color: var(--dim); margin-bottom: 10px;
+}
+.mark5-quick-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+
+.mark5-quick-btn {
+  padding: 8px 20px; border-radius: 20px;
+  border: 1px solid rgba(0,255,150,.22);
+  background: rgba(0,255,150,.04); color: var(--green-dim);
+  font-family: inherit; font-size: 12px; letter-spacing: 1px;
+  cursor: pointer; transition: all .15s;
+}
+.mark5-quick-btn:hover {
+  background: rgba(0,255,150,.12); color: var(--green);
+  border-color: rgba(0,255,150,.5);
+  box-shadow: 0 0 12px rgba(0,255,150,.08);
+}
+.mark5-quick-btn.mark5-flash {
+  background: rgba(0,255,150,.25); color: var(--green); transform: scale(.94);
+}
+
+/* 预设管理 */
+.mark5-preset-section {
+  border-top: 1px solid rgba(0,255,150,.1); padding-top: 16px;
+}
+.mark5-preset-header {
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer; padding: 4px 0; user-select: none;
+}
+.mark5-preset-header:hover .mark5-preset-toggle-title { color: var(--text); }
+.mark5-preset-toggle-title { font-size: 11px; letter-spacing: 2px; color: var(--dim); transition: color .2s; }
+.mark5-preset-toggle-icon { font-size: 10px; color: var(--dim); }
+.mark5-preset-body { display: none; padding-top: 16px; }
+.mark5-preset-add-row { display: flex; gap: 10px; margin-bottom: 14px; }
+.mark5-preset-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.mark5-preset-tag {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(0,255,150,.05); border: 1px solid rgba(0,255,150,.18);
+  border-radius: 20px; padding: 4px 10px 4px 14px;
+  font-size: 12px; color: var(--green-dim);
+}
+.mark5-tag-del {
+  background: none; border: none; color: rgba(255,255,255,.2);
+  font-size: 15px; line-height: 1; cursor: pointer; padding: 0;
+  transition: color .15s;
+}
+.mark5-tag-del:hover { color: var(--err); }
+
+/* 标记记录区 */
+.mark5-records-header {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+}
+.mark5-records-title { font-size: 11px; letter-spacing: 3px; color: var(--green-dim); flex: 1; }
+.mark5-records-count {
+  font-size: 10px; letter-spacing: 1px; color: var(--dim);
+  background: rgba(0,255,150,.06); border: 1px solid rgba(0,255,150,.15);
+  border-radius: 20px; padding: 2px 10px;
+}
+
+.mark5-records-list {
+  display: flex; flex-direction: column; gap: 6px;
+  max-height: 340px; overflow-y: auto; padding-right: 4px;
+}
+.mark5-records-list::-webkit-scrollbar { width: 4px; }
+.mark5-records-list::-webkit-scrollbar-track { background: transparent; }
+.mark5-records-list::-webkit-scrollbar-thumb { background: rgba(0,255,150,.2); border-radius: 2px; }
+
+.mark5-empty {
+  text-align: center; padding: 32px;
+  font-size: 12px; color: rgba(255,255,255,.15); letter-spacing: 2px;
+}
+
+.mark5-record-item {
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(0,0,0,.25); border: 1px solid rgba(255,255,255,.06);
+  border-left: 2px solid rgba(0,255,150,.35);
+  border-radius: 8px; padding: 10px 14px; font-size: 13px;
+}
+.mark5-rec-idx { color: var(--dim); font-size: 11px; letter-spacing: 1px; min-width: 28px; }
+.mark5-rec-action { color: var(--green); font-weight: 600; letter-spacing: 1px; flex: 1; }
+.mark5-rec-time { color: var(--text); font-size: 12px; letter-spacing: 1px; white-space: nowrap; }
+.mark5-rec-ms { color: var(--dim); font-size: 10px; }
+.mark5-rec-ts { color: var(--dim); font-size: 11px; letter-spacing: 1px; white-space: nowrap; }
+.mark5-rec-del {
+  background: none; border: none; color: rgba(255,255,255,.18);
+  font-size: 16px; line-height: 1; cursor: pointer; padding: 0 4px;
+  transition: color .15s; margin-left: 4px; flex-shrink: 0;
+}
+.mark5-rec-del:hover { color: var(--err); }
+
 /* ── 响应式 ── */
 @media (max-width: 800px) {
   .page2-sidebar { flex: 1 1 100%; position: static; }
