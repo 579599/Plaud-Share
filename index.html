@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<script>if(localStorage.getItem('theme')==='dark')document.body.classList.add('dark');</script>
 
 <nav class="tab-nav">
   <button class="tab-btn active" onclick="showPage(1, this)">⏱  时间戳</button>
@@ -14,6 +15,7 @@
   <button class="tab-btn" onclick="showPage(3, this)">🔔  计时器</button>
   <button class="tab-btn" onclick="showPage(4, this)">🎙  录音记录</button>
   <button class="tab-btn" onclick="showPage(5, this)">🏷️  动作标记</button>
+  <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="切换主题">🌙</button>
 </nav>
 
 <!-- PAGE 1 -->
@@ -238,7 +240,6 @@
   <div class="card mark5-card">
     <div class="section-title mark5-title-row">
       <span>🏷️  动作标记</span>
-      <span class="mark5-sync-badge" id="mark5-sync-badge">⟳ 加载中</span>
     </div>
 
     <!-- 主控制行：下拉选择 + 自定义输入 + 标记按钮 -->

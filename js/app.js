@@ -1,3 +1,15 @@
+// ── 主题切换 ──────────────────────────────────────────────────
+function toggleTheme() {
+  const isDark = document.body.classList.toggle('dark');
+  const btn = document.getElementById('themeToggleBtn');
+  if (btn) btn.textContent = isDark ? '☀️' : '🌙';
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+(function initThemeBtn() {
+  const btn = document.getElementById('themeToggleBtn');
+  if (btn) btn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+})();
+
 // ── Tab 切换 ──────────────────────────────────────────────────
 function showPage(n, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -504,59 +516,37 @@ function rec4ShowSummary() {
 }
 
 // ── PAGE 5：动作标记 ──────────────────────────────────────────
+const FALLBACK_PRESETS = ['开始录音','Ble连接','结束录音','Ble断连','WIFI快传','上云','导出日志','绑定'];
 const mark5Presets = [];
 const mark5Marks = [];
 let mark5PresetsOpen = false;
 
-function mark5SetBadge(state) {
-  const b = document.getElementById('mark5-sync-badge');
-  if (!b) return;
-  const map = {
-    loading: ['⟳ 加载中',  ''],
-    ok:      ['● 已同步',   'ok'],
-    local:   ['○ 本地模式', 'err'],
-    saving:  ['⟳ 保存中',  ''],
-  };
-  const [text, cls] = map[state] || map.loading;
-  b.textContent = text;
-  b.className = 'mark5-sync-badge' + (cls ? ' ' + cls : '');
-}
-
 async function mark5LoadPresets() {
-  mark5SetBadge('loading');
+  // 用户自定义 → 优先
   try {
-    const res = await fetch('/api/presets');
+    const raw = localStorage.getItem('mark5_presets');
+    const saved = raw ? JSON.parse(raw) : null;
+    if (Array.isArray(saved) && saved.length) {
+      saved.forEach(p => mark5Presets.push(p));
+      mark5LoadLocalMarks(); mark5UpdateSelect(); mark5RenderQuick(); mark5RenderRecords();
+      return;
+    }
+  } catch(e) {}
+  // 读 presets.json 作为默认值
+  try {
+    const res = await fetch('presets.json');
     if (!res.ok) throw new Error();
     const data = await res.json();
-    if (!Array.isArray(data)) throw new Error();
-    mark5Presets.length = 0;
-    data.forEach(p => mark5Presets.push(p));
-    mark5SetBadge('ok');
+    if (Array.isArray(data) && data.length) data.forEach(p => mark5Presets.push(p));
+    else FALLBACK_PRESETS.forEach(p => mark5Presets.push(p));
   } catch {
-    if (!mark5Presets.length)
-      ['开始录音','Ble连接','结束录音','Ble断连','WIFI快传','上云','导出日志','绑定']
-        .forEach(p => mark5Presets.push(p));
-    mark5SetBadge('local');
+    FALLBACK_PRESETS.forEach(p => mark5Presets.push(p));
   }
-  mark5LoadLocalMarks();
-  mark5UpdateSelect();
-  mark5RenderQuick();
-  mark5RenderRecords();
+  mark5LoadLocalMarks(); mark5UpdateSelect(); mark5RenderQuick(); mark5RenderRecords();
 }
 
-async function mark5SavePresets() {
-  mark5SetBadge('saving');
-  try {
-    const res = await fetch('/api/presets', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify([...mark5Presets])
-    });
-    if (!res.ok) throw new Error();
-    mark5SetBadge('ok');
-  } catch {
-    mark5SetBadge('local');
-  }
+function mark5SavePresets() {
+  try { localStorage.setItem('mark5_presets', JSON.stringify(mark5Presets)); } catch(e) {}
 }
 
 function mark5SaveLocalMarks() {
