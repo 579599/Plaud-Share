@@ -59,10 +59,21 @@ function tick() {
 }
 tick(); setInterval(tick, 50);
 
+function copyText(text) {
+  if (navigator.clipboard && location.protocol !== 'file:') {
+    return navigator.clipboard.writeText(text);
+  }
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.cssText = 'position:fixed;opacity:0';
+  document.body.appendChild(ta); ta.select();
+  document.execCommand('copy'); document.body.removeChild(ta);
+  return Promise.resolve();
+}
+
 function copyTS() {
   const ts = Math.floor(Date.now() / 1000);
   const btn = document.getElementById('copyBtn');
-  navigator.clipboard.writeText(String(ts)).then(() => {
+  copyText(String(ts)).then(() => {
     btn.textContent = 'COPIED  ✓'; btn.classList.add('ok');
     setTimeout(() => { btn.textContent = 'COPY TIMESTAMP'; btn.classList.remove('ok'); }, 1500);
   });
@@ -719,8 +730,8 @@ function mark5CopyAll() {
     return `#${i + 1}\t${m.action}\t${t}\t${Math.floor(m.ts / 1000)}`;
   });
   const btn = document.getElementById('mark5-copy-btn');
-  navigator.clipboard.writeText(lines.join('\n')).then(() => {
-    btn.textContent = '已复制 ✓'; btn.style.color = 'var(--green)';
+  copyText(lines.join('\n')).then(() => {
+    btn.textContent = '已复制 ✓'; btn.style.color = 'var(--accent)';
     setTimeout(() => { btn.textContent = '复制全部记录'; btn.style.color = ''; }, 1800);
   });
 }
